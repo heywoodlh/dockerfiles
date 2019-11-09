@@ -10,6 +10,4 @@ RUN pacman --noconfirm -Sy thunderbird \
         --assume-installed libseccomp \
         --assume-installed systemd
 
-COPY init.sh /init.sh
-
-CMD ["/init.sh"]
+CMD ["/bin/bash"]
