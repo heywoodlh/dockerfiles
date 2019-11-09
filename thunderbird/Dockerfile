@@ -10,4 +10,10 @@ RUN pacman --noconfirm -Sy thunderbird \
         --assume-installed libseccomp \
         --assume-installed systemd
 
-CMD ["/bin/bash"]
+
+RUN useradd -ms /bin/bash thunderbird
+RUN passwd -d thunderbird
+USER thunderbird
+WORKDIR /home/thunderbird
+
+CMD ["thunderbird"]
