@@ -13,4 +13,4 @@ RUN trizen --noconfirm -Sy wavebox-bin ttf-ms-fonts libnotify gvfs
 RUN sudo rm /etc/sudoers.d/wavebox
 WORKDIR /home/wavebox
 
-CMD ["/bin/bash"]
+CMD ["wavebox"]
