@@ -24,6 +24,7 @@ RUN /home/wire/.nix-profile/bin/nix-channel --update
 
 # Install Wire
 RUN /home/wire/.nix-profile/bin/nix-env --install wire-desktop
+RUN mkdir -p /home/wire/.config/Wire && chown -R wire:wire /home/wire/.config/Wire
 RUN sudo rm /etc/sudoers.d/wire
 WORKDIR /home/wire
 
