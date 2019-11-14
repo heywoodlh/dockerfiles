@@ -1,9 +1,11 @@
-FROM ubuntu:latest
+FROM debian:buster
 LABEL maintainer="heywoodlh"
 
-RUN dpkg --add-architecture i386 &&\
+RUN apt-get update &&\
+	apt-get install -y wine winetricks && \
+	dpkg --add-architecture i386 &&\
         apt-get update &&\
-        apt-get install -y wine-development wine32-development
+        apt-get install -y wine32
 
 RUN useradd -ms /bin/bash wine
 RUN chown -R wine:wine /opt/
