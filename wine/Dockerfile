@@ -1,13 +1,14 @@
-FROM archlinux:latest
-MAINTAINER heywoodlh
+FROM ubuntu:latest
+LABEL maintainer="heywoodlh"
 
-RUN echo '[multilib]' | tee -a /etc/pacman.conf &&\
-	echo 'Include = /etc/pacman.d/mirrorlist' | tee -a /etc/pacman.conf
+RUN dpkg --add-architecture i386 &&\
+        apt-get update &&\
+        apt-get install -y wine-development wine32-development
 
-RUN pacman -Sy --noconfirm wine wine-mono
 RUN useradd -ms /bin/bash wine
-RUN passwd -l wine
+RUN chown -R wine:wine /opt/
 RUN passwd -l root
+RUN passwd -l wine
 
 USER wine
-WORKDIR /home/wine
+WORKDIR /home/wine/
