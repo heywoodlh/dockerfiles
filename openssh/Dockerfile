@@ -10,4 +10,4 @@ RUN sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_conf
 RUN passwd -l ssh-user
 
 EXPOSE 22
-CMD ["/usr/bin/sshd", "-D", "-h", "/etc/ssh/ssh_host_rsa_key"]
+CMD ["/usr/bin/sshd", "-D", "-e", "-h", "/etc/ssh/ssh_host_rsa_key", "-E", "/var/log/sshd.log"]
