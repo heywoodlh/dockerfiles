@@ -2,7 +2,7 @@ FROM ubuntu:latest
 LABEL maintainer="heywoodlh"
 
 RUN apt-get update &&\
-	apt-get install -y wine winetricks && \
+	apt-get install -y wine-stable winetricks && \
 	dpkg --add-architecture i386 &&\
         apt-get update &&\
         apt-get install -y wine32
