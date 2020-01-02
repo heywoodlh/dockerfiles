@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM ubuntu:latest
 LABEL maintainer="heywoodlh"
 
 RUN apt-get update &&\
