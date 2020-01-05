@@ -41,6 +41,9 @@ RUN git clone https://git.osmocom.org/gr-gsm /tmp/gr-gsm &&\
 	cmake .. &&\
 	make && sudo make install && sudo ldconfig 
 
+ADD https://raw.githubusercontent.com/keenerd/rtl-sdr/master/rtl-sdr.rules /etc/udev/rules.d/rtlsdr.rules
+
+RUN sudo rm /etc/sudoers.d/gnuradio
 
 WORKDIR /home/gnuradio
 
