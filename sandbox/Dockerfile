@@ -11,9 +11,15 @@ RUN mkdir -p /etc/sudoers.d/ && printf 'sandbox ALL=(ALL) NOPASSWD:ALL\n' | tee 
 
 ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/files/sandbox/torrc.default /etc/tor/torrc.default
 
-RUN chown -R tor /etc/tor/
+RUN chown -R sandbox:sandbox /etc/tor/ &&\
+	chown -R sandbox:sandbox /var/lib/tor/ 
+
 
 USER sandbox
+## Set up fisher and mono prompt
+RUN curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish &&\
+	fish -c 'fisher add fishpkg/fish-prompt-mono'
 RUN mkdir -p /home/sandbox/.config/fish/functions/ &&\
 	echo "set fish_greeting ''" >> /home/sandbox/.config/fish/config.fish
+
 CMD ["tor", "-f", "/etc/tor/torrc.default"]
