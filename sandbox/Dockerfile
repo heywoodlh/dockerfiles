@@ -10,11 +10,10 @@ RUN passwd -l sandbox
 RUN mkdir -p /etc/sudoers.d/ && printf 'sandbox ALL=(ALL) NOPASSWD:ALL\n' | tee -a /etc/sudoers.d/sandbox
 
 ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/files/sandbox/torrc.default /etc/tor/torrc.default
-#ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/files/sandbox/tor-iptables.sh /opt/tor-iptables.sh
 
-ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/files/sandbox/supervisor.conf /etc/supervisor.conf
+RUN chown -R tor /etc/tor/
 
 USER sandbox
 RUN mkdir -p /home/sandbox/.config/fish/functions/ &&\
 	echo "set fish_greeting ''" >> /home/sandbox/.config/fish/config.fish
-CMD ["sudo", "supervisord", "-c", "/etc/supervisor.conf"]
+CMD ["tor", "-f", "/etc/tor/torrc.default"]
