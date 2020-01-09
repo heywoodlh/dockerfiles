@@ -3,4 +3,4 @@ MAINTAINER heywoodlh
 
 RUN go get -u github.com/vultr/vultr-cli
 
-ENTRYPOINT "/go/bin/vultr-cli"
+CMD "/go/bin/vultr-cli"
