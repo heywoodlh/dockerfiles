@@ -2,4 +2,4 @@
 
 tor -f /etc/tor/torrc.default &
 
-torify transmission-daemon --auth --username "$TR_USER" --password "$PASSWORD" --port 9091 --allowed "127.0.0.1"
+torify transmission-daemon --auth --username "$TR_USER" --password "$TR_PASSWORD" --port 9091 --allowed "127.0.0.1"
