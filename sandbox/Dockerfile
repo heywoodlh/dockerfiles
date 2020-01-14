@@ -2,8 +2,12 @@ FROM archlinux:latest
 
 MAINTAINER heywoodlh
 
+## Core packages
 RUN pacman -Syu --noconfirm &&\
-	pacman -S --noconfirm python python-pip tor torsocks iptables supervisor git vim sudo bind-tools fish curl wget nmap inetutils firefox iputils
+	pacman -S --noconfirm python python-pip tor torsocks git vim sudo bind-tools fish curl wget nmap inetutils firefox iputils
+## Additional packages
+RUN pacman -S --noconfirm openssh mosh masscan
+
 RUN useradd -ms /usr/bin/fish sandbox
 RUN passwd -l root
 RUN passwd -l sandbox
@@ -12,7 +16,7 @@ RUN mkdir -p /etc/sudoers.d/ && printf 'sandbox ALL=(ALL) NOPASSWD:ALL\n' | tee 
 ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/files/sandbox/torrc.default /etc/tor/torrc.default
 
 RUN chown -R sandbox:sandbox /etc/tor/ &&\
-	chown -R sandbox:sandbox /var/lib/tor/ 
+	chown -R sandbox:sandbox /var/lib/tor/
 
 
 USER sandbox
