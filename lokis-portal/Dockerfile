@@ -18,6 +18,8 @@ RUN rm -rf /var/www/html &&\
 	chown -R loki:loki /var/www/html &&\
 	chown -R loki:loki /opt/lokis-portal
 
+RUN echo "ServerName 0.0.0.0" >> /etc/apache2/apache2.conf
+
 USER loki
 WORKDIR /var/www/html
 
