@@ -18,19 +18,22 @@ RUN apt-get update && apt-get install -y firefox \
 	rm -rf /var/lib/apt/lists/*
 
 RUN useradd -ms /bin/bash iceweasel
-RUN passwd -d iceweasel
+RUN passwd -d iceweasel &&\
+	passwd -d root
+RUN usermod -aG audio iceweasel
 
 RUN mkdir -p /home/iceweasel/.mozilla/firefox/
-ADD https://github.com/heywoodlh/dockerfiles/blob/master/files/default.profile.tar.gz?raw=true /tmp/default.profile.tar.gz
+COPY default.profile.tar.gz /tmp/default.profile.tar.gz
 RUN tar xzf /tmp/default.profile.tar.gz --directory /home/iceweasel/.mozilla/firefox/
-ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/iceweasel/user.js /home/iceweasel/.mozilla/firefox/default.profile/user.js
-ADD https://raw.githubusercontent.com/heywoodlh/dockerfiles/master/files/profiles.ini /home/iceweasel/.mozilla/firefox/profiles.ini
+
+COPY user.js /home/iceweasel/.mozilla/firefox/default.profile/user.js
+COPY profiles.ini /home/iceweasel/.mozilla/firefox/profiles.ini
 RUN chown -R iceweasel:iceweasel /home/iceweasel/.mozilla/
+
+
+COPY entrypoint.sh /usr/bin/startfirefox
 
 USER iceweasel
 RUN chown -R iceweasel:iceweasel /home/iceweasel/.mozilla/
 WORKDIR /home/iceweasel
-
-COPY entrypoint.sh /usr/bin/startfirefox
-
-CMD ["/usr/bin/startfirefox"]
+ENTRYPOINT ["/usr/bin/startfirefox"]

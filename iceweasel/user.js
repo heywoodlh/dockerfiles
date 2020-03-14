@@ -1790,4 +1790,4 @@ user_pref("plugins.click_to_play", true); // [DEFAULT: true in FF25+]
 
 /* END: internal custom pref to test for syntax errors ***/
 user_pref("_user.js.parrot", "SUCCESS: No no he's not dead, he's, he's restin'!");
-
+user_pref("browser.tabs.remote.autostart", false);
