@@ -14,5 +14,3 @@ RUN  apt-get update &&\
 	rm -rf /var/tmp/* &&\
 	rm -rf /var/lib/apt/lists/*
 
-COPY supervisord.conf /etc/supervisord.conf
-ENTRYPOINT ["/usr/bin/supervisord"]
