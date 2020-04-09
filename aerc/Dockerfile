@@ -2,6 +2,7 @@ FROM archlinux
 
 MAINTAINER "heywoodlh"
 
+
 RUN useradd -ms /bin/bash aerc
 RUN passwd -d aerc
 
