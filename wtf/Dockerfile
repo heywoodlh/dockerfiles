@@ -15,6 +15,12 @@ RUN pacman -Sy --noconfirm make gcc\
 	wget \
 	nano
 
+RUN git clone https://github.com/aserebryakov/vim-todo-lists /tmp/vim-todo-lists &&\
+	mkdir -p /home/wtf/.vim &&\
+	mv /tmp/vim-todo-lists/* /home/wtf/.vim/ &&\
+	rm -rf /tmp/vim-todo-lists
+	
+
 RUN git clone https://github.com/wtfutil/wtf /opt/wtf
 WORKDIR /opt/wtf
 RUN make && make install
