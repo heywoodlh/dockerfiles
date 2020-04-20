@@ -11,7 +11,9 @@ RUN pacman -Sy --noconfirm make gcc\
 	man scdoc \
 	git \
 	vim \
-	w3m
+	w3m \
+	lynx \
+	libffi 
 
 RUN git clone https://git.sr.ht/~sircmpwn/aerc /opt/aerc
 WORKDIR /opt/aerc
