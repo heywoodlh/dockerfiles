@@ -21,9 +21,11 @@ RUN make && make install
 
 RUN pacman -S --noconfirm nano \
 	openssh \
-	dante
+	dante \
+	pass
 
-RUN pacman -Sc --noconfirm
+RUN pacman -Sc --noconfirm &&\
+	ln -s /usr/lib/libffi.so.7 /usr/lib/libffi.so.6
 
 USER aerc
 WORKDIR /home/aerc
