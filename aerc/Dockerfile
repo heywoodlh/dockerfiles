@@ -22,7 +22,8 @@ RUN make && make install
 RUN pacman -S --noconfirm nano \
 	openssh \
 	dante \
-	pass
+	pass \
+	khard
 
 RUN pacman -Sc --noconfirm &&\
 	ln -s /usr/lib/libffi.so.7 /usr/lib/libffi.so.6
