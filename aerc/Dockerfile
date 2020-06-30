@@ -19,11 +19,13 @@ RUN git clone https://git.sr.ht/~sircmpwn/aerc /opt/aerc
 WORKDIR /opt/aerc
 RUN make && make install
 
-RUN pacman -S --noconfirm nano \
+RUN pacman -Sy --noconfirm nano \
 	openssh \
 	dante \
 	pass \
-	khard
+	khard \
+	pandoc \
+	fzf
 
 RUN pacman -Sc --noconfirm &&\
 	ln -s /usr/lib/libffi.so.7 /usr/lib/libffi.so.6
