@@ -19,17 +19,20 @@ RUN useradd -ms /bin/bash aerc
 RUN passwd -d aerc
 
 RUN pacman -Sy --noconfirm git \
-	vim nano \
+	vim nano perl \
 	w3m \
 	libffi \
 	openssh \
 	dante \
 	pass \
 	khard \
-	fzf
+	fzf \
+	perl
 
 COPY --from=stage0 /usr/local/bin/aerc /usr/local/bin/
 COPY --from=stage0 /usr/local/share/aerc/ /usr/local/share/aerc/
+
+RUN ln -s /usr/lib/perl?/?.??/core_perl/CORE/libperl.so /usr/lib/
 
 USER aerc
 WORKDIR /home/aerc
