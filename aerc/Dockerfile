@@ -4,7 +4,7 @@ RUN pacman -Sy --noconfirm make gcc\
 	go \
 	man scdoc \
 	pandoc \
-	git
+	git 
 
 RUN git clone https://git.sr.ht/~sircmpwn/aerc /opt/aerc
 WORKDIR /opt/aerc
@@ -27,10 +27,13 @@ RUN pacman -Sy --noconfirm git \
 	dante \
 	pass \
 	khard \
-	fzf
+	fzf \
+	perl
 
 COPY --from=stage0 /usr/local/bin/aerc /usr/local/bin/
 COPY --from=stage0 /usr/local/share/aerc/ /usr/local/share/aerc/
+
+RUN ln -s /usr/lib/perl?/?.??/core_perl/CORE/libperl.so /usr/lib/
 
 USER aerc
 WORKDIR /home/aerc
