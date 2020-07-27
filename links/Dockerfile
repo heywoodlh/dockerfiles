@@ -1,7 +1,7 @@
-FROM archlinux
+FROM debian
 MAINTAINER "heywoodlh"
 
-RUN pacman -Sy --noconfirm links libevent
+RUN apt-get update && apt-get install -y links libevent
 
 RUN useradd -ms /bin/bash links
 RUN passwd -d links
