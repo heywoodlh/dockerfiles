@@ -16,7 +16,7 @@ MAINTAINER "heywoodlh"
 RUN useradd -ms /bin/bash aerc
 RUN passwd -d aerc
 
-RUN apt-get update && apt-get install -y git \
+RUN apt-get update && apt-get install --no-install-recommends -y git \
 	vim nano perl \
 	w3m \
 	dante-server \
@@ -27,6 +27,8 @@ RUN apt-get update && apt-get install -y git \
 
 COPY --from=build /usr/local/bin/aerc /usr/local/bin/
 COPY --from=build /usr/local/share/aerc/ /usr/local/share/aerc/
+
+RUN ln -s /usr/bin/pinentry-curses /usr/local/bin/pinentry-curses
 
 USER aerc
 WORKDIR /home/aerc
