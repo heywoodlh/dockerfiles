@@ -17,6 +17,7 @@ RUN useradd -ms /bin/bash aerc
 RUN passwd -d aerc
 
 RUN apt-get update && apt-get install --no-install-recommends -y git \
+	ca-certificates \
 	vim nano perl \
 	w3m \
 	dante-server \
@@ -28,7 +29,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y git \
 COPY --from=build /usr/local/bin/aerc /usr/local/bin/
 COPY --from=build /usr/local/share/aerc/ /usr/local/share/aerc/
 
-RUN ln -s /usr/bin/pinentry-curses /usr/local/bin/pinentry-curses
+RUN ln -s /usr/bin/pinentry* /usr/local/bin/
 
 USER aerc
 WORKDIR /home/aerc
