@@ -18,7 +18,7 @@ RUN passwd -d aerc
 
 RUN apt-get update && apt-get install --no-install-recommends -y git \
 	ca-certificates \
-	vim nano perl \
+	vim nano perl less \
 	w3m \
 	dante-server \
 	dante-client \
