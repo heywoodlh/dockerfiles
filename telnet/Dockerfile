@@ -1,24 +1,24 @@
-FROM alpine
+FROM alpine as build
 
+#Masscan installation
+RUN apk add --no-cache clang gcc libc-dev git make libc6-compat libpcap-dev linux-headers && \
+    git clone https://github.com/robertdavidgraham/masscan /opt/masscan && \
+    cd /opt/masscan && \
+    make -j
+
+#Nmap vulscan script
+RUN git clone https://github.com/scipag/vulscan /opt/vulscan
+
+FROM alpine
 LABEL maintainer="heywoodlh"
 
 #Telnet, netcat and nmap installation
 RUN apk add --no-cache busybox-extras netcat-openbsd nmap nmap-scripts
 
 #Masscan installation
-RUN apk add --no-cache clang gcc libc-dev git make libc6-compat libpcap-dev linux-headers && \
-    cd /tmp && \
-    git clone https://github.com/robertdavidgraham/masscan && \
-    cd masscan && \
-    make -j && \
-    mv bin/masscan /usr/local/bin && \
-    rm -rf /tmp/masscan
-    
-#Nmap NSE setup
-RUN git clone https://github.com/scipag/vulscan /usr/share/nmap/scripts/vulscan
+COPY --from=build /opt/masscan/bin/masscan /usr/local/bin/masscan
 
-#Cleanup
-RUN apk del clang git make linux-headers libc-dev gcc
-
+#Vulscan nmap script
+COPY --from=build /opt/vulscan /usr/share/nmap/scripts/vulscan
 
 CMD "/bin/ash"
