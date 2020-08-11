@@ -18,6 +18,5 @@ RUN useradd -ms /bin/bash metasploit
 RUN passwd -l metasploit
 
 USER metasploit
-RUN msfdb init --no-msf-data-service --use-defaults || : 
 
 CMD ["/bin/bash"]
