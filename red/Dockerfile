@@ -16,7 +16,8 @@ FROM debian
 LABEL maintainer="heywoodlh"
 
 #Tools installation
-RUN apt-get update && apt-get install -y nmap prips dnsutils nbtscan
+RUN apt-get update && apt-get install -y nmap prips dnsutils nbtscan &&\
+	rm -rf /var/lib/apt/lists/*
 
 #Masscan installation
 COPY --from=build /opt/masscan/bin/masscan /usr/local/bin/masscan
