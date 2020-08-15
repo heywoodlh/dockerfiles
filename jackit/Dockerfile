@@ -1,7 +1,9 @@
-FROM archlinux:latest
+FROM debian
 MAINTAINER heywoodlh
 
-RUN pacman -Sy --noconfirm git python2 python2-pip
+RUN apt-get update && apt-get install -y git \
+	python python-pip \
+	&& rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/insecurityofthings/jackit /opt/jackit &&\
 	cd /opt/jackit &&\

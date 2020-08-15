@@ -1,7 +1,8 @@
 FROM debian
 MAINTAINER heywoodlh
 
-RUN apt-get update && apt-get install -y --no-install-recommends openssh-server
+RUN apt-get update && apt-get install -y --no-install-recommends openssh-server \
+	&& rm -rf /var/lib/apt/lists/*
 RUN passwd -l root
 
 RUN useradd -ms /bin/bash ssh-user
