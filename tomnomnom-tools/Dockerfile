@@ -17,7 +17,7 @@ RUN go get github.com/tomnomnom/waybackurls
 FROM alpine
 LABEL maintainer="heywoodlh"
 
-COPY --from=build /go/bin/* /usr/bin/
+COPY --from=build /go/bin/* /usr/local/bin/
 COPY --from=build /root/.gf /root/.gf
 
 RUN mkdir /data
