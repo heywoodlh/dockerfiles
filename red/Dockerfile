@@ -27,7 +27,7 @@ FROM alpine
 LABEL maintainer="heywoodlh"
 
 #Tools installation
-RUN apk add --no-cache bash nmap bind-tools
+RUN apk add --no-cache bash nmap bind-tools libpcap libpcap-dev
 
 #Prips installation
 COPY --from=build /usr/local/bin/prips /usr/local/bin/
