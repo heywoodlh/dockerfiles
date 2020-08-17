@@ -1,32 +1,52 @@
 FROM alpine as build
 
-#Masscan installation
-RUN apk add --no-cache clang gcc libc-dev git make libc6-compat libpcap-dev linux-headers && \
-    git clone https://github.com/robertdavidgraham/masscan /opt/masscan && \
-    cd /opt/masscan && \
-    make -j
+ENV nbtscan_version='1.0.35'
+ENV prips_version='1.1.1'
 
-#Nmap vulscan script
-RUN git clone https://github.com/scipag/vulscan /opt/vulscan
+#Red-team scripts installation
+RUN apk add --no-cache git curl &&\
+	git clone https://github.com/heywoodlh/red-scripts /opt/red-scripts
 
-#My red team scripts
-RUN git clone https://github.com/heywoodlh/red-scripts /opt/red-scripts
 
-FROM debian
+#NBTScan installation
+RUN apk add --no-cache make gcc libc-dev &&\
+	wget http://unixwiz.net/tools/nbtscan-source-1.0.35.tgz -O /tmp/nbtscan.tgz &&\
+	mkdir -p /tmp/nbtscan-src &&\
+	tar xzf /tmp/nbtscan.tgz -C /tmp/nbtscan-src &&\
+	cd /tmp/nbtscan-src &&\
+	make &&\
+	mv /tmp/nbtscan-src/nbtscan /usr/local/bin
+
+#Prips installation
+RUN wget http://devel.ringlet.net/files/sys/prips/prips-1.1.1.tar.gz -O /tmp/prips.tar.gz &&\
+	mkdir -p /tmp/prips && tar xzf /tmp/prips.tar.gz -C /tmp/prips &&\
+	cd /tmp/prips/prips-$prips_version &&\
+	make && mv /tmp/prips/prips-$prips_version/prips /usr/local/bin/prips
+
+FROM alpine
 LABEL maintainer="heywoodlh"
 
 #Tools installation
-RUN apt-get update && apt-get install -y nmap prips dnsutils nbtscan &&\
-	rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache bash nmap bind-tools
+
+#Prips installation
+COPY --from=build /usr/local/bin/prips /usr/local/bin/
+
+#NBTScan installation
+COPY --from=build /usr/local/bin/nbtscan /usr/local/bin/
 
 #Masscan installation
-COPY --from=build /opt/masscan/bin/masscan /usr/local/bin/masscan
+COPY --from=heywoodlh/telnet /usr/local/bin/masscan /usr/local/bin/masscan
+
+#Tomnomnom tools
+COPY --from=heywoodlh/tomnomnom-tools /usr/local/bin/ /usr/local/bin/
+COPY --from=heywoodlh/tomnomnom-tools /root/.gf/ /root/.gf/
 
 #Vulscan nmap script
-COPY --from=build /opt/vulscan /usr/share/nmap/scripts/vulscan
+COPY --from=heywoodlh/telnet /usr/share/nmap/scripts/vulscan/ /usr/share/nmap/scripts/vulscan/
 
 #My red team scripts
-COPY --from=build /opt/red-scripts /opt/red-scripts
+COPY --from=build /opt/red-scripts/ /opt/red-scripts/
 
 WORKDIR /opt/red-scripts
 CMD "/bin/bash"
