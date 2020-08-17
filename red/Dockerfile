@@ -10,7 +10,7 @@ RUN apk add --no-cache git curl &&\
 
 #NBTScan installation
 RUN apk add --no-cache make gcc libc-dev &&\
-	wget http://unixwiz.net/tools/nbtscan-source-1.0.35.tgz -O /tmp/nbtscan.tgz &&\
+	wget http://unixwiz.net/tools/nbtscan-source-$nbtscan_version.tgz -O /tmp/nbtscan.tgz &&\
 	mkdir -p /tmp/nbtscan-src &&\
 	tar xzf /tmp/nbtscan.tgz -C /tmp/nbtscan-src &&\
 	cd /tmp/nbtscan-src &&\
@@ -18,7 +18,7 @@ RUN apk add --no-cache make gcc libc-dev &&\
 	mv /tmp/nbtscan-src/nbtscan /usr/local/bin
 
 #Prips installation
-RUN wget http://devel.ringlet.net/files/sys/prips/prips-1.1.1.tar.gz -O /tmp/prips.tar.gz &&\
+RUN wget http://devel.ringlet.net/files/sys/prips/prips-$prips_version.tar.gz -O /tmp/prips.tar.gz &&\
 	mkdir -p /tmp/prips && tar xzf /tmp/prips.tar.gz -C /tmp/prips &&\
 	cd /tmp/prips/prips-$prips_version &&\
 	make && mv /tmp/prips/prips-$prips_version/prips /usr/local/bin/prips
