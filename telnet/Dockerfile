@@ -13,7 +13,7 @@ FROM alpine
 LABEL maintainer="heywoodlh"
 
 #Telnet, netcat and nmap installation
-RUN apk add --no-cache busybox-extras netcat-openbsd nmap nmap-scripts
+RUN apk add --no-cache busybox-extras netcat-openbsd nmap nmap-scripts libpcap libpcap-dev
 
 #Masscan installation
 COPY --from=build /opt/masscan/bin/masscan /usr/local/bin/masscan
