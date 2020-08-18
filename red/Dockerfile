@@ -2,6 +2,7 @@ FROM alpine as build
 
 ENV nbtscan_version='1.0.35'
 ENV prips_version='1.1.1'
+ENV enum4linux_version='0.8.9'
 
 #Red-team scripts installation
 RUN apk add --no-cache git curl &&\
@@ -23,11 +24,18 @@ RUN wget http://devel.ringlet.net/files/sys/prips/prips-$prips_version.tar.gz -O
 	cd /tmp/prips/prips-$prips_version &&\
 	make && mv /tmp/prips/prips-$prips_version/prips /usr/local/bin/prips
 
+#Enum4linux installation
+RUN apk --no-cache add wget && wget --no-check-certificate https://labs.portcullis.co.uk/download/enum4linux-$enum4linux_version.tar.gz -O /tmp/enum4linux.tar.gz &&\
+	mkdir -p /tmp/enum4linux && tar xzf /tmp/enum4linux.tar.gz -C /tmp/enum4linux &&\
+	mv /tmp/enum4linux/enum4linux-$enum4linux_version/enum4linux.pl /usr/local/bin/enum4linux
+
 FROM alpine
 LABEL maintainer="heywoodlh"
 
 #Tools installation
-RUN apk add --no-cache bash nmap bind-tools libpcap libpcap-dev
+RUN apk add --no-cache bash \
+	nmap bind-tools libpcap libpcap-dev \
+	samba-client-libs samba-dev samba-client perl
 
 #Prips installation
 COPY --from=build /usr/local/bin/prips /usr/local/bin/
@@ -37,6 +45,9 @@ COPY --from=build /usr/local/bin/nbtscan /usr/local/bin/
 
 #Masscan installation
 COPY --from=heywoodlh/telnet /usr/local/bin/masscan /usr/local/bin/masscan
+
+#Enum4linux installation
+COPY --from=build /usr/local/bin/enum4linux /usr/local/bin/enum4linux
 
 #Tomnomnom tools
 COPY --from=heywoodlh/tomnomnom-tools /usr/local/bin/ /usr/local/bin/
