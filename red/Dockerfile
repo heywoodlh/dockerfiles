@@ -58,6 +58,7 @@ COPY --from=heywoodlh/telnet /usr/share/nmap/scripts/vulscan/ /usr/share/nmap/sc
 
 #My red team scripts
 COPY --from=build /opt/red-scripts/ /opt/red-scripts/
+RUN ln -s /opt/red-scripts/netscan.sh /usr/local/bin/netscan
 
 WORKDIR /opt/red-scripts
 CMD "/bin/bash"
