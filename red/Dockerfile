@@ -8,7 +8,6 @@ ENV enum4linux_version='0.8.9'
 RUN apk add --no-cache git curl &&\
 	git clone https://github.com/heywoodlh/red-scripts /opt/red-scripts
 
-
 #NBTScan installation
 RUN apk add --no-cache make gcc libc-dev &&\
 	wget http://unixwiz.net/tools/nbtscan-source-$nbtscan_version.tgz -O /tmp/nbtscan.tgz &&\
@@ -35,7 +34,7 @@ LABEL maintainer="heywoodlh"
 #Tools installation
 RUN apk add --no-cache bash \
 	nmap bind-tools libpcap libpcap-dev \
-	samba-client-libs samba-dev samba-client perl
+	samba-client-libs samba-dev samba-client perl openldap-clients
 
 #Prips installation
 COPY --from=build /usr/local/bin/prips /usr/local/bin/
