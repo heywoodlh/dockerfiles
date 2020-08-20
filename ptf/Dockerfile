@@ -11,7 +11,7 @@ LABEL maintainer=heywoodlh
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y python3 python3-pip mlocate git \
+RUN apt-get update && apt-get install -y python3 python3-pip mlocate git python python-pip \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /opt/ptf /opt/ptf
