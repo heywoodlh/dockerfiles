@@ -38,7 +38,7 @@ LABEL maintainer="heywoodlh"
 
 #Tools installation
 RUN apk add --no-cache bash \
-	nmap bind-tools libpcap libpcap-dev \
+	nmap nmap-scripts bind-tools libpcap libpcap-dev \
 	samba-client-libs samba-dev samba-client perl openldap-clients
 
 #Prips installation
