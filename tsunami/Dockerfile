@@ -1,6 +1,6 @@
 FROM alpine as build
 
-RUN apk add --no-cache ca-certificates git make gcc libc-dev g++
+RUN apk add --no-cache ca-certificates git make gcc libc-dev g++ autoconf
 
 # Compile ncrack
 RUN git clone https://github.com/nmap/ncrack /opt/ncrack &&\
@@ -23,7 +23,7 @@ LABEL maintainer=heywoodlh
 
 
 # Install dependencies
-RUN apk add --no-cache nmap openjdk8
+RUN apk add --no-cache nmap nmap-scripts openjdk8
 
 # Install ncrack
 COPY --from=build /usr/local/bin/ncrack /usr/local/bin/ncrack
@@ -61,4 +61,4 @@ WORKDIR /usr/tsunami
 
 RUN mkdir -p /usr/tsunami/logs
 
-ENTRYPOINT ["java", "-cp", "tsunami.jar:/usr/tsunami/plugins/*", "-Dtsunami-config.location=/usr/tsunami/tsunami.yaml", "com.google.tsunami.main.cli.TsunamiCli"]
+ENTRYPOINT ["java", "-cp", "/usr/tsunami/tsunami.jar:/usr/tsunami/plugins/*", "-Dtsunami-config.location=/usr/tsunami/tsunami.yaml", "com.google.tsunami.main.cli.TsunamiCli"]
