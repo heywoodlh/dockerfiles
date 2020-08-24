@@ -23,7 +23,7 @@ LABEL maintainer=heywoodlh
 
 
 # Install dependencies
-RUN apk add --no-cache nmap openjdk11
+RUN apk add --no-cache nmap openjdk8
 
 # Install ncrack
 COPY --from=build /usr/local/bin/ncrack /usr/local/bin/ncrack
@@ -59,4 +59,6 @@ RUN cd /usr/repos/tsunami-security-scanner &&\
 
 WORKDIR /usr/tsunami
 
-ENTRYPOINT ["java", "-cp", "tsunami.jar:plugins/*", "-Dtsunami-config.location=tsunami.yaml", "com.google.tsunami.main.cli.TsunamiCli"]
+RUN mkdir -p /usr/tsunami/logs
+
+ENTRYPOINT ["java", "-cp", "tsunami.jar:/usr/tsunami/plugins/*", "-Dtsunami-config.location=/usr/tsunami/tsunami.yaml", "com.google.tsunami.main.cli.TsunamiCli"]
