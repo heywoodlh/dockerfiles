@@ -1,11 +1,34 @@
-FROM debian
+FROM donaldrich/kali-linux
 LABEL maintainer=heywoodlh
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN echo 'deb [trusted=yes] http://http.kali.org/kali kali-rolling main contrib non-free' >> /etc/apt/sources.list
-RUN apt-get update && apt-get install -y kali-linux-large \
-	pciutils \
+RUN apt-get update && apt-get install -y \
+	amap \
+	commix \
+	dsniff \
+	dirb \
+	dnschef dnsenum dnsmap dnsrecon dnswalk \
+	exploitdb \
+	hping3 \
+	hydra \
+	medusa \
+	netdiscover ndiff nmap \
+	man \
+	nikto \
+	padbuster \
+	openjdk-14-jre-headless \
+	reaver \
+	responder \
+	set \
+	sqlmap \
+	socat \
+	theharvester \
+	tshark \
+	webscarab \
+	wpscan \
+	yersinia \
+	zaproxy \
 	bash-completion &&\
 	apt-get autoremove -y &&\
 	apt-get clean \
