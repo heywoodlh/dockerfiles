@@ -11,9 +11,9 @@ RUN pip3 install qrcode
 RUN apk del py3-pip
 
 
-USER weechat
 RUN mkdir -p /weechat/.weechat/python/
 COPY --from=staging /opt/signal-weechat/signal.py /weechat/.weechat/python/signal.py
+RUN chown -R weechat:weechat /weechat/.weechat
 
 VOLUME /weechat
 
