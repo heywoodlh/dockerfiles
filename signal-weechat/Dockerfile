@@ -6,7 +6,7 @@ RUN git clone https://github.com/thefinn93/signal-weechat /opt/signal-weechat
 FROM heywoodlh/weechat
 LABEL maintainer=heywoodlh
 
-RUN apk --no-cache add py3-pip
+RUN apk --no-cache add py3-pip ca-certificates
 RUN pip3 install qrcode
 RUN apk del py3-pip
 
