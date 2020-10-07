@@ -16,9 +16,8 @@ RUN ln -s /usr/bin/pinentry* /usr/local/bin/
 COPY --from=builder /opt/nb/nb /usr/local/bin/nb
 
 RUN chmod +x /usr/local/bin/nb
-RUN yes | nb env install
-
-WORKDIR /app
+RUN yes | nb env install &&\
+	rm -rf /var/lib/apt/lists/*
 
 RUN useradd -ms /bin/bash nb
 RUN passwd -d nb
@@ -26,4 +25,5 @@ RUN passwd -d nb
 USER nb
 WORKDIR /home/nb
 
-ENTRYPOINT "nb"
+ENTRYPOINT ["nb"]
+CMD ["help"]
