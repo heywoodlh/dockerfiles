@@ -4,7 +4,6 @@ RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/xwmx/nb /opt/nb
 
 FROM node:current-buster
-
 LABEL maintainer=heywoodlh
 
 ENV TERM=xterm-256color
@@ -21,11 +20,8 @@ RUN yes | nb env install
 
 WORKDIR /app
 
-
-
 RUN useradd -ms /bin/bash nb
 RUN passwd -d nb
-
 
 USER nb
 WORKDIR /home/nb
