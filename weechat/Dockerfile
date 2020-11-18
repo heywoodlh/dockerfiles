@@ -48,6 +48,7 @@ USER weechat
 WORKDIR /opt/weechat-matrix
 RUN make install
 
+USER root
 VOLUME /weechat
 
 WORKDIR /weechat
