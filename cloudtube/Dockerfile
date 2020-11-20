@@ -5,7 +5,7 @@ ENV UID="1000"
 ENV GID="1000"
 
 USER root
-RUN userdel --remove-home node
+RUN deluser --remove-home node
 
 RUN apk --no-cache add git python3 make gcc libc-dev g++ &&\
 	git clone https://git.sr.ht/~cadence/cloudtube /opt/cloudtube
