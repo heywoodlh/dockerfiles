@@ -23,6 +23,7 @@ RUN chmod +x /opt/run.sh
 
 EXPOSE 10412
 VOLUME /opt/cloudtube/db
+VOLUME /opt/cloudtube/config
 
 USER cloudtube
 ENTRYPOINT /opt/run.sh
