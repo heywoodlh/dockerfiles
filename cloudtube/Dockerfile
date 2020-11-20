@@ -1,0 +1,22 @@
+FROM node:alpine
+LABEL maintainer=heywoodlh
+
+RUN apk --no-cache add git python3 make gcc libc-dev g++ &&\
+	git clone https://git.sr.ht/~cadence/cloudtube /opt/cloudtube
+
+WORKDIR /opt/cloudtube
+RUN npm install
+
+RUN addgroup -S cloudtube &&\
+	adduser -D -S -h /opt/cloudtube -s /sbin/nologin -G cloudtube cloudtube &&\
+	passwd -d cloudtube &&\
+	chown -R cloudtube:cloudtube /opt/cloudtube
+
+COPY run.sh /opt/run.sh
+RUN chmod +x /opt/run.sh
+
+EXPOSE 10412
+VOLUME /opt/cloudtube/db
+
+USER cloudtube
+ENTRYPOINT /opt/run.sh
