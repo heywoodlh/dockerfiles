@@ -5,4 +5,5 @@ RUN apk --no-cache add swatch ssmtp
 
 RUN mkdir -p /logs
 VOLUME /logs
-ENTRYPOINT [ "swatchdog", "--daemon", "--config-file", "/etc/swatch/swatchrc"]
+ENTRYPOINT [ "swatchdog", "--config-file", "/etc/swatch/swatchrc"]
+
