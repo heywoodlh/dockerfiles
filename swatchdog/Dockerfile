@@ -1,7 +1,7 @@
 FROM alpine
 LABEL maintainer=heywoodlh
 
-RUN apk --no-cache add swatch
+RUN apk --no-cache add swatch ssmtp
 
 RUN mkdir -p /logs
 VOLUME /logs
