@@ -2,8 +2,9 @@ FROM alpine as build
 
 #Masscan installation
 RUN apk add --no-cache clang gcc libc-dev git make libc6-compat libpcap-dev linux-headers && \
-    git clone https://github.com/robertdavidgraham/masscan /opt/masscan && \
+    git clone --depth=1 https://github.com/robertdavidgraham/masscan /opt/masscan && \
     cd /opt/masscan && \
+    git fetch --unshallow && \
     make -j
 
 #Nmap vulscan script
