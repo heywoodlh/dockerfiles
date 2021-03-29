@@ -1,9 +1,9 @@
-FROM alpine as build
+FROM debian as build
 
-RUN apk --no-cache add git &&\
-	git clone https://git.sr.ht/~cadence/Second /opt/second
+RUN apt-get update && apt-get install -y git &&\
+	git clone https://git.sr.ht/~cadence/NewLeaf /opt/second
 
-FROM python:alpine
+FROM python:buster
 LABEL maintainer=heywoodlh
 
 ENV UID="1000"
@@ -15,10 +15,9 @@ COPY --from=build /opt/second /opt/second
 RUN pip3 install -r /opt/second/requirements.txt &&\
 	echo "website_origin = \"$WEBSITE_ORIGIN\"" > /opt/second/configuration.py
 
-RUN addgroup -g $GID -S second &&\
-	adduser -u $UID -D -S -h /opt/second -s /sbin/nologin -G second second &&\
-	passwd -d second &&\
-	chown -R second:second /opt/second
+RUN addgroup --gid $GID second &&\
+        adduser --uid $UID --gecos "" --disabled-password --home /opt/second --shell /sbin/nologin --ingroup second second &&\
+        chown -R second:second /opt/second
 
 COPY run.sh /opt/run.sh
 RUN chmod +x /opt/run.sh

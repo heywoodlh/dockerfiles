@@ -1,4 +1,4 @@
-#!/usr/bin/env ash
+#!/usr/bin/env bash
 
 if [[ -n "$WEBSITE_ORIGIN" ]]
 then
