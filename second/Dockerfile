@@ -1,5 +1,7 @@
 FROM debian as build
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && apt-get install -y git &&\
 	git clone https://git.sr.ht/~cadence/NewLeaf /opt/second
 
