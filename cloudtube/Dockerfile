@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:lts-buster
 LABEL maintainer=heywoodlh
 
 ENV UID="1000"
@@ -7,15 +7,15 @@ ENV GID="1000"
 USER root
 RUN deluser --remove-home node
 
-RUN apk --no-cache add git python3 make gcc libc-dev g++ &&\
+RUN apt-get update && apt-get install -y git python3 make gcc libc-dev g++ &&\
+	rm -rf /var/lib/apt/lists/* &&\
 	git clone https://git.sr.ht/~cadence/cloudtube /opt/cloudtube
 
 WORKDIR /opt/cloudtube
 RUN npm install
 
-RUN addgroup -g $GID -S cloudtube &&\
-	adduser -u $UID -D -S -h /opt/cloudtube -s /sbin/nologin -G cloudtube cloudtube &&\
-	passwd -d cloudtube &&\
+RUN addgroup --gid $GID cloudtube &&\
+	adduser --uid $UID --gecos "" --disabled-password --home /opt/cloudtube --shell /sbin/nologin --ingroup cloudtube cloudtube &&\
 	chown -R cloudtube:cloudtube /opt/cloudtube
 
 COPY run.sh /opt/run.sh
