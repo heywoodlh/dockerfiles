@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	man \
 	nikto \
 	padbuster \
-	openjdk-14-jre-headless \
+	openjdk-17-jre-headless \
 	reaver \
 	responder \
 	set \
