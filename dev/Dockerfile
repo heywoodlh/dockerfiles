@@ -21,7 +21,8 @@ WORKDIR /home/dev/conf
 
 RUN ./setup.sh
 RUN echo '. /home/dev/.bash_profile' >> /home/dev/.bashrc &&\
-	echo 'export PS1="(dev) \W :: "' >> /home/dev/.bash_profile
+	echo 'export PS1="(dev) \W :: "' >> /home/dev/.bash_profile &&\
+	rm /home/dev/.bash.d/docker
 
 USER root
 RUN rm /etc/sudoers.d/dev &&\
