@@ -3,7 +3,7 @@ FROM alpine:latest
 ENV uid="1000"
 ENV gid="1000"
 
-RUN apk --no-cache add bash coreutils vim git openssh gnupg pass python3 py3-pip py3-wheel go sudo curl pinentry &&\
+RUN apk --no-cache add bash coreutils vim git openssh gnupg pass python3 py3-pip py3-wheel go sudo curl pinentry mosh-client &&\
 	ln -s /usr/bin/pinentry-curses /usr/local/bin/pinentry-curses
 
 RUN addgroup -g $gid -S dev &&\
