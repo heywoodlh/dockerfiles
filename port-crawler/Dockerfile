@@ -8,4 +8,4 @@ RUN chmod +x /usr/local/bin/port-crawler
 RUN apk --no-cache add bash python3 py3-pip sed &&\
 	pip3 install jsonpyes
 
-ENTRYPOINT "/usr/local/bin/port-crawler"
+CMD "/usr/local/bin/port-crawler"
