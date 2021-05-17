@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
      image:
-        description: 'Target image to build' 
+        description: 'Target image to deploy to Docker Hub' 
   
 jobs:
   docker:
