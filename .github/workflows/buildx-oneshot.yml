@@ -2,10 +2,9 @@ name: buildx-oneshot
 
 on:
   workflow_dispatch:
-    input:
-      image:
-        description: 'Specify Docker image to deploy'     
-        required: true
+    inputs:
+     image:
+        description: 'Target image to build' 
   
 jobs:
   docker:
