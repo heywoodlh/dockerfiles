@@ -31,7 +31,7 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +%Y_%m_snapshot)"
       -
-        name: Build and push port-crawler
+        name: Build and push ${{ github.event.inputs.image }}
         uses: docker/build-push-action@v2
         with:
           context: ${{ github.event.inputs.image }}
