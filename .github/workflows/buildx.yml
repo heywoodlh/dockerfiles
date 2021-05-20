@@ -76,3 +76,53 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/armhf
           push: true
           tags: heywoodlh/metasploit:latest,heywoodlh/metasploit:${{ steps.date.outputs.date }}
+      -
+        name: Build and push tomnomnom-tools
+        uses: docker/build-push-action@v2
+        with:
+          context: tomnomnom-tools
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/tomnomnom-tools:latest,heywoodlh/tomnomnom-tools:${{ steps.date.outputs.date }}
+      -
+        name: Build and push links
+        uses: docker/build-push-action@v2
+        with:
+          context: links
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/links:latest,heywoodlh/links:${{ steps.date.outputs.date }}
+      -
+        name: Build and push openssh
+        uses: docker/build-push-action@v2
+        with:
+          context: openssh
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/openssh:latest,heywoodlh/openssh:${{ steps.date.outputs.date }}
+      -
+        name: Build and push evilginx
+        uses: docker/build-push-action@v2
+        with:
+          context: evilginx
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/evilginx2:latest,heywoodlh/evilginx2:${{ steps.date.outputs.date }}
+      -
+        name: Build and push second
+        uses: docker/build-push-action@v2
+        with:
+          context: second
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/second:latest,heywoodlh/second:${{ steps.date.outputs.date }}
+      -
+        name: Build and push cloudtube
+        uses: docker/build-push-action@v2
+        with:
+          context: cloudtube
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/cloudtube:latest,heywoodlh/cloudtube:${{ steps.date.outputs.date }}
+
+
