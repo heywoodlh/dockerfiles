@@ -263,7 +263,7 @@ RUN echo MASTODON=${MASTODON} > /tmp/status \
 
 FROM bitlbee-build as matrix-build
 
-ARG MATRIX=1
+ARG MATRIX=0
 ARG OLM_VERSION=3.1.4
 ARG MATRIX_VERSION=1d23385
 
