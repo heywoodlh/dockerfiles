@@ -271,6 +271,7 @@ RUN echo SIGNAL=${SIGNAL} > /tmp/status \
      then cd /tmp \
        && git clone https://github.com/hoehermann/libpurple-signald \
        && cd libpurple-signald \
+       && git submodule update --init \
        && make \
        && make install \
        && strip /usr/lib/purple-2/libsignald.so; \
