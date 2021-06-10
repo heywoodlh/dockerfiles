@@ -5,6 +5,10 @@ WORKDIR /opt/hydroxide
 RUN GO111MODULE=on go build ./cmd/hydroxide
 
 FROM debian:latest
+
+RUN apt-get update && apt-get install -y ca-certificates \
+	&& rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /opt/hydroxide/hydroxide /usr/local/bin/hydroxide
 RUN chmod +x /usr/local/bin/hydroxide
 
