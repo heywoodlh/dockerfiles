@@ -1,4 +1,4 @@
-FROM debian AS build
+FROM debian:unstable AS build
 
 RUN apt-get update && apt-get install -y --no-install-recommends gnupg git ruby-dev
 
@@ -6,7 +6,7 @@ RUN git clone https://github.com/rapid7/metasploit-omnibus.git /opt/metasploit-o
 	chmod +x /opt/metasploit-omnibus/config/templates/metasploit-framework-wrappers/msfupdate.erb &&\
 	/opt/metasploit-omnibus/config/templates/metasploit-framework-wrappers/msfupdate.erb
 
-FROM debian
+FROM debian:unstable
 COPY --from=build /opt/metasploit-framework/ /opt/metasploit-framework/
 RUN ln -s /opt/metasploit-framework/bin/* /usr/bin/
 
