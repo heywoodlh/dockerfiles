@@ -33,7 +33,7 @@ RUN apk --no-cache add wget && wget --no-check-certificate https://labs.portcull
 	sed -i -e '1s:#!/usr/bin/python:#!/usr/bin/python2:' /tmp/polenum/polenum-$polenum_version/polenum.py &&\
 	mv /tmp/polenum/polenum-$polenum_version/polenum.py /usr/local/bin/polenum.py
 
-FROM alpine
+FROM heywoodlh/telnet
 LABEL maintainer="heywoodlh"
 
 #Tools installation
@@ -46,9 +46,6 @@ COPY --from=build /usr/local/bin/prips /usr/local/bin/
 
 #NBTScan installation
 COPY --from=build /usr/local/bin/nbtscan /usr/local/bin/
-
-#Masscan installation
-COPY --from=heywoodlh/telnet /usr/local/bin/masscan /usr/local/bin/masscan
 
 #Enum4linux installation
 COPY --from=build /usr/local/bin/enum4linux /usr/local/bin/enum4linux
@@ -64,9 +61,6 @@ RUN apk --no-cache add gcc musl-dev libffi-dev openssl-dev python2 python2-dev &
 #Tomnomnom tools
 COPY --from=heywoodlh/tomnomnom-tools /usr/local/bin/ /usr/local/bin/
 COPY --from=heywoodlh/tomnomnom-tools /root/.gf/ /root/.gf/
-
-#Vulscan nmap script
-COPY --from=heywoodlh/telnet /usr/share/nmap/scripts/vulscan/ /usr/share/nmap/scripts/vulscan/
 
 #My red team scripts
 COPY --from=build /opt/red-scripts/ /opt/red-scripts/
