@@ -11,6 +11,8 @@ COPY --from=build /opt/flan/gcp_push.py /
 COPY --from=build /opt/flan/output_report.py /
 COPY --from=build /opt/flan/requirements.txt /
 COPY --from=build /opt/flan/run.sh /
+COPY --from=build /opt/flan/shared /shared
+COPY --from=build /opt/flan/contrib /contrib
 
 RUN apk add --no-cache nmap nmap-scripts git \
     && pip install --no-cache-dir -r requirements.txt \
