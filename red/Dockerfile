@@ -53,7 +53,7 @@ COPY --from=build /usr/local/bin/enum4linux /usr/local/bin/enum4linux
 #Polenum.py installation
 COPY --from=build /usr/local/bin/polenum.py /usr/local/bin/polenum.py
 RUN apk --no-cache add gcc musl-dev libffi-dev openssl-dev python2 python2-dev &&\
-	wget https://bootstrap.pypa.io/get-pip.py -O /tmp/get-pip.py &&\
+	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py &&\
 	python2 /tmp/get-pip.py &&\
 	rm /tmp/get-pip.py &&\
 	python2 -m pip --no-cache-dir install impacket
