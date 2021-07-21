@@ -124,3 +124,11 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/armhf
           push: true
           tags: heywoodlh/red:latest,heywoodlh/red:${{ steps.date.outputs.date }}
+      -
+        name: Build and push flan-scan
+        uses: docker/build-push-action@v2
+        with:
+          context: flan-scan
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/flan-scan:latest,heywoodlh/flan-scan:${{ steps.date.outputs.date }}
