@@ -1,0 +1,23 @@
+syntax on
+
+filetype plugin indent on
+
+" Show line numbers
+set number
+
+" Custom keybinds
+nnoremap zz :wa <bar> :qa!<CR>
+nnoremap zq <bar> :qa!<CR>
+map <silent> <C-y> :w !pbcopy<CR>
+map <silent> <C-t> :r! echo "[$(date +\%H:\%M:\%S)]"<CR>
+map <silent> <C-o> :FZF $HOME<CR>
+
+command NoComments %s/#.*\n//g
+nnoremap nc :NoComments<CR>
+
+" Folding
+set foldmethod=syntax
+set foldlevel=99
+
+" Show matching characters like paranthesis, brackets, etc.
+set showmatch

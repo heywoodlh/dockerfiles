@@ -1,0 +1,40 @@
+name: buildx-oneshot
+
+on:
+  workflow_dispatch:
+    inputs:
+     image:
+        description: 'Target image to deploy to Docker Hub' 
+  
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - 
+        name: Get current month
+        id: date
+        run: echo "::set-output name=date::$(date +%Y_%m_snapshot)"
+      -
+        name: Build and push ${{ github.event.inputs.image }}
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ github.event.inputs.image }}
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/${{ github.event.inputs.image }}:latest,heywoodlh/${{ github.event.inputs.image }}:${{ steps.date.outputs.date }}
+

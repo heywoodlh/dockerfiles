@@ -1,0 +1,9 @@
+production: &pgsql
+  adapter: postgresql
+  database: metasploit
+  username: metasploit
+  password: metasploit
+  host: localhost
+  port: 5432
+  pool: 200
+  timeout: 5

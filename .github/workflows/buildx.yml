@@ -1,0 +1,147 @@
+name: buildx
+
+on:
+  schedule:
+    - cron: "0 0 * * Sun"
+  workflow_dispatch:
+  
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - 
+        name: Get current month
+        id: date
+        run: echo "::set-output name=date::$(date +%Y_%m_snapshot)"
+      -
+        name: Build and push bitlbee-libpurple
+        uses: docker/build-push-action@v2
+        with:
+          context: bitlbee-libpurple
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/bitlbee-libpurple:latest,heywoodlh/bitlbee-libpurple:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push port-crawler
+        uses: docker/build-push-action@v2
+        with:
+          context: port-crawler
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/port-crawler:latest,heywoodlh/port-crawler:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push aerc
+        uses: docker/build-push-action@v2
+        with:
+          context: aerc
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/aerc:latest,heywoodlh/aerc:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push hydroxide
+        uses: docker/build-push-action@v2
+        with:
+          context: hydroxide
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/hydroxide:latest,heywoodlh/hydroxide:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push tomnomnom-tools
+        uses: docker/build-push-action@v2
+        with:
+          context: tomnomnom-tools
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/tomnomnom-tools:latest,heywoodlh/tomnomnom-tools:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push evilginx2
+        uses: docker/build-push-action@v2
+        with:
+          context: evilginx2
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/evilginx2:latest,heywoodlh/evilginx2:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push second
+        uses: docker/build-push-action@v2
+        with:
+          context: second
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/second:latest,heywoodlh/second:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push cloudtube
+        uses: docker/build-push-action@v2
+        with:
+          context: cloudtube
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/cloudtube:latest,heywoodlh/cloudtube:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push flan-scan
+        uses: docker/build-push-action@v2
+        with:
+          context: flan-scan
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/flan-scan:latest,heywoodlh/flan-scan:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push squid
+        uses: docker/build-push-action@v2
+        with:
+          context: squid
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/squid:latest,heywoodlh/squid:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push iperf3
+        uses: docker/build-push-action@v2
+        with:
+          context: iperf3
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/iperf3:latest,heywoodlh/iperf3:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push kali-linux
+        uses: docker/build-push-action@v2
+        with:
+          context: kali-linux
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/kali-linux:latest,heywoodlh/kali-linux:${{ steps.date.outputs.date }}
+        if: always()
+      -
+        name: Build and push vimbox
+        uses: docker/build-push-action@v2
+        with:
+          context: vimbox
+          platforms: linux/amd64,linux/arm64,linux/armhf
+          push: true
+          tags: heywoodlh/vimbox:latest,heywoodlh/vimbox:${{ steps.date.outputs.date }}
+        if: always()

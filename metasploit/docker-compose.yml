@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  metasploit:
+    image: "heywoodlh/metasploit:latest"
+    command: "tail -F /dev/null"
+    tty: true
+  db:
+    image: "postgres:14"
+    environment: 
+      POSTGRES_USER: msf
+      POSTGRES_PASSWORD: msf 
+      POSTGRES_DB: msf

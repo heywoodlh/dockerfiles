@@ -1,0 +1,7 @@
+export PS1="\W :: "
+export EDITOR="vim"
+export PAGER="less"
+
+case $- in *i*)
+    [ -z "$TMUX" ] && exec tmux
+esac
