@@ -1,34 +1,18 @@
-FROM heywoodlh/kali-minimal
+FROM kalilinux/kali-rolling 
 LABEL maintainer=heywoodlh
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+	kali-linux-headless \
 	amap \
-	commix \
-	dsniff \
-	dirb \
-	dnschef dnsenum dnsmap dnsrecon dnswalk \
-	exploitdb \
-	hping3 \
-	hydra \
+	dnswalk \
 	medusa \
-	netdiscover ndiff nmap \
+	ndiff \
 	man \
-	nikto \
 	padbuster \
-	openjdk-17-jre-headless \
-	reaver \
-	responder \
-	set \
-	sqlmap \
-	socat \
-	theharvester \
-	tshark \
 	webscarab \
-	wpscan \
 	yersinia \
-	zaproxy \
 	bash-completion \
 	neofetch &&\
 	apt-get autoremove -y &&\
