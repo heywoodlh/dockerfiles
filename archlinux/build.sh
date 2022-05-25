@@ -17,6 +17,8 @@ do
 	cp ${root_dir}/Dockerfile ${target_dir}/Dockerfile
 	sed -e "s|%base_image%|${base_image}|g" -i ${target_dir}/Dockerfile
 
+	[[ ${arch} != "amd64" ]] && cp ${root_dir}/arm-pacman.conf ${target_dir}/pacman.conf && printf "COPY pacman.conf /etc/pacman.conf" >> ${target_dir}/Dockerfile
+
 	docker buildx build --no-cache --platform ${darch} --squash -t heywoodlh/archlinux:${label} -t heywoodlh/archlinux:${label}_${date_tag} --push .
 done
 
