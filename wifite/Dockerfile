@@ -1,4 +1,4 @@
-FROM heywoodlh/kali-minimal:latest
+FROM kalilinux/kali-rolling:latest
 LABEL maintainer="heywoodlh"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -17,12 +17,13 @@ RUN apt-get update \
 RUN apt-get update \
 	&& apt-get install -y \
 	python2 \
-	python-dev \
+	python2-dev \
 	python-pip \
 	git \
 	libpq-dev \
 	zlib1g-dev \
 	libpcap-dev \
+	&& ln -s $(which python2) /usr/bin/python \
 	&& git clone https://github.com/JPaulMora/Pyrit.git /opt/pyrit \
 	&& pip2 install psycopg2 scapy \
 	&& cd /opt/pyrit \

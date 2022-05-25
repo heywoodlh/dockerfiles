@@ -10,7 +10,7 @@ RUN go install github.com/tomnomnom/meg@latest
 
 RUN git clone https://github.com/heywoodlh/netscan /opt/netscan
 
-FROM heywoodlh/kali-minimal:latest
+FROM kalilinux/kali-rolling:latest
 LABEL MAINTAINER=heywoodlh
 
 ENV DEBIAN_FRONTEND=noninteractive
