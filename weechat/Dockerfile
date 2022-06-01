@@ -42,11 +42,16 @@ RUN apk --no-cache add \
     && adduser -u $UID -D -S -h /weechat -s /sbin/nologin -G weechat weechat
 
 COPY --from=build /opt/weechat-matrix /opt/weechat-matrix
-RUN pip3 install -r /opt/weechat-matrix/requirements.txt
+RUN pip3 install -r /opt/weechat-matrix/requirements.txt 
 
 USER weechat
 WORKDIR /opt/weechat-matrix
 RUN make install
+
+## Wee-slack installation
+RUN mkdir -p /weechat/.weechat/python 
+ADD https://raw.githubusercontent.com/wee-slack/wee-slack/xoxc-tokens/wee_slack.py /weechat/.weechat/python/wee_slack.py
+RUN ln -s /weechat/.weechat/python/wee_slack.py /weechat/.weechat/python/autoload/wee_slack.py
 
 USER root
 VOLUME /weechat
