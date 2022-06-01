@@ -36,6 +36,8 @@ RUN apk --no-cache add \
 RUN mkdir -p /usr/share/weechat/python/ /weechat/.local/share/weechat/python /weechat/.local/share/weechat/python/autoload \
     && curl -L https://raw.githubusercontent.com/wee-slack/wee-slack/xoxc-tokens/wee_slack.py -o /usr/share/weechat/python/wee_slack.py 
 
+RUN pip3 install websocket-client
+
 USER root
 VOLUME /weechat
 
