@@ -25,6 +25,7 @@ RUN apk --no-cache add \
     weechat-lua \
     weechat-spell \
     weechat-perl \
+    weechat-matrix \
     && mkdir /weechat \
     && mkdir -p /usr/share/weechat/python \
     && addgroup -g $GID -S weechat \
