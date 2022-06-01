@@ -25,18 +25,15 @@ RUN apk --no-cache add \
     weechat-lua \
     weechat-spell \
     weechat-perl \
-    weechat-matrix \
     && mkdir /weechat \
+    && mkdir -p /usr/share/weechat/python \
     && addgroup -g $GID -S weechat \
     && adduser -u $UID -D -S -h /weechat -s /sbin/nologin -G weechat weechat \
     && chown -R weechat:weechat /weechat 
 
-USER weechat
-
 ## Wee-slack installation
-RUN mkdir -p /weechat/.local/share/weechat/python /weechat/.local/share/weechat/python/autoload \
-    && curl -L https://raw.githubusercontent.com/wee-slack/wee-slack/xoxc-tokens/wee_slack.py -o /weechat/.local/share/weechat/python/wee_slack.py \
-    && ln -s /weechat/.local/share/weechat/python/wee_slack.py /weechat/.local/share/weechat/python/autoload/wee_slack.py
+RUN mkdir -p /usr/share/weechat/python/ /weechat/.local/share/weechat/python /weechat/.local/share/weechat/python/autoload \
+    && curl -L https://raw.githubusercontent.com/wee-slack/wee-slack/xoxc-tokens/wee_slack.py -o /usr/share/weechat/python/wee_slack.py 
 
 USER root
 VOLUME /weechat
