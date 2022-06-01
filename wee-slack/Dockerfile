@@ -17,6 +17,7 @@ RUN apk --no-cache add \
     pass \
     shadow \
     ca-certificates \
+    su-exec \
     curl \
     weechat \
     weechat-ruby \
