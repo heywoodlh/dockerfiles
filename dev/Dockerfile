@@ -2,10 +2,14 @@ FROM heywoodlh/conf:latest
 LABEL MAINTAINER=heywoodlh
 
 USER root
-RUN apk --no-cache add ttyd openssh-server mosh supervisor
+RUN apk --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing add ttyd openssh-server mosh supervisor runuser 
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY sshd.sh /sshd.sh
+
+## Setup SSH
+RUN usermod -p '*' heywoodlh \
+    && echo '' | tee /etc/motd
 
 EXPOSE 22
 EXPOSE 7681
