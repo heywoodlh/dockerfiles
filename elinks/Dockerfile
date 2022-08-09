@@ -4,7 +4,7 @@ RUN apt-get update \
 	&& apt-get install -y curl libmozjs185-dev gcc make autoconf make sparse pkg-config libssl-dev
 
 ## Build elinks
-RUN curl -L 'http://elinks.cz/download/elinks-0.11.7.tar.gz' -o /tmp/elinks.tar.gz \
+RUN curl -L 'http://elinks.cz/download/elinks-current-0.13.tar.gz' -o /tmp/elinks.tar.gz \
 	&& cd /opt \
 	&& tar xzvf /tmp/elinks.tar.gz \
 	&& mv elinks* elinks \

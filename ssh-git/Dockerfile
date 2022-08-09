@@ -1,6 +1,11 @@
 FROM heywoodlh/openssh:latest
 LABEL maintainer=heywoodlh
 
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y git \
+	&& rm -rf /var/lib/apt/lists/*
+
 RUN mkdir -m 700 -p /git/.ssh \
 	&& addgroup --gid 1050 git \
         && adduser --uid 1050 --gecos "" --disabled-password --home /git --shell /bin/bash --ingroup git git \
