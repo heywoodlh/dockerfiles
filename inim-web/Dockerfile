@@ -1,4 +1,4 @@
-FROM heywoodlh:inim
+FROM heywoodlh/inim
 
 RUN echo '/app/bin/inim' >> /etc/shells
 
