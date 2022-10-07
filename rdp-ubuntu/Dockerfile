@@ -27,7 +27,6 @@ RUN apt-get autoremove -y &&\
 
 ENV LANG en_US.UTF-8
 
-COPY bashrc /etc/bashrc
 COPY startup /startup
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
