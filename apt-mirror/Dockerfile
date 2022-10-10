@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 LABEL MAINTAINER=heywoodlh
 
 RUN apt-get update \
