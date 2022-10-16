@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:stable
 LABEL maintainer=heywoodlh
 
 ADD https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb /tmp/packages-microsoft-prod.deb
