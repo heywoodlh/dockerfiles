@@ -21,7 +21,8 @@ trap "exit" INT
 if [[ ${action} == 'instance-create' ]]
 then
 	extra_args=""
-	plans_list="$(vultr-cli plans list | grep -vE '^ID' | sed -n '/^===/q;p')"
+	plans_list="$(vultr-cli plans list | grep -vE 'VPSPLANID|REGIONS' | sed -n '/^===/q;p' | grep 'SSD')"
+	plans_list="$(printf "${plans_list}" | grep -E '^201' && printf "${plans_list}" | grep -E '^411|^202|^412|^203|^413|^204')"
 	regions_list="$(vultr-cli regions list | grep -vE '^ID' | sed -n '/^===/q;p')"
 	regions_list="$(printf "${regions_list}" | grep 'Los Angeles' && printf "${regions_list}" | grep 'US' | grep -v 'Los Angeles' && printf "${regions_list}" | grep -v 'US')"
 	os_list="$(vultr-cli os list | grep -vE '^ID' | grep -E 'Arch Linux|Debian 11|Ubuntu 22.04' | sed -n '/^===/q;p')"
@@ -77,10 +78,10 @@ then
 
 	if [[ ${use_ssh_keys} == "true" ]]
 	then
-		ssh_key_list=$(vultr-cli ssh-key list | grep -vE '^ID' | sed -n '/^===/q;p')
+		ssh_key_list=$(vultr-cli ssh-key list | grep -vE '^ID' | sed -n '/^===/q;p' | grep -vE 'SSHKEYID')
 		ssh_key_id="$(printf "${ssh_key_list}" | fzf | awk '{print $1}')"
 
-		extra_args+="--ssh-keys ${ssh_key_id} "
+		extra_args+="--ssh-keys=\"${ssh_key_id}\" "
 	fi
 
 	use_script="$(printf "true\nfalse" | fzf --prompt="Run script:" )"
@@ -92,9 +93,9 @@ then
 	if [[ ${use_script} == "true" ]]
 	then
 		script_list=$(vultr-cli script list | grep -vE '^ID' | sed -n '/^===/q;p')
-		script_id="$(printf "${script_list}" | fzf | awk '{print $1}')"
+		script_id="$(printf "${script_list}" | grep -vE 'SCRIPTID' | fzf | awk '{print $1}')"
 
-		extra_args+="--script-id ${script_id} "
+		extra_args+="--script-id=\"${script_id}\" "
 	fi
 
 	use_firewall_group="$(printf "true\nfalse" | fzf --prompt="Add to firewall group:" )"
@@ -106,27 +107,27 @@ then
 	if [[ ${use_firewall_group} == "true" ]]
 	then
 		firewall_list=$(vultr-cli firewall group list | grep -vE '^ID' | sed -n '/^===/q;p')
-		firewall_id="$(printf "${firewall_list}" | fzf | awk '{print $1}')"
+		firewall_id="$(printf "${firewall_list}" | grep -vE 'FIREWALLGROUPID' | fzf | awk '{print $1}')"
 
-		extra_args+="--firewall-group ${firewall_id} "
+		extra_args+="--firewall-group=\"${firewall_id}\" "
 	fi
 
-	printf "\n\nCreate instance with following parameters: \nvultr-cli server create \\ \n    --host ${hostname} \\ \n    --label ${hostname} \\ \n    --os ${os_id} \\ \n    --plan ${plan_id} \\ \n    --private-network ${private_network} \\ \n    --region ${region_id} \\ \n    --ipv6 ${enable_ipv6} \\ \n    --ddos ${ddos_protection} \\ \n    --notify false \\ \n    ${extra_args} \n\n"
+	printf "\n\nCreate instance with following parameters: \nvultr-cli server create \\ \n    --host=\"${hostname}\" \\ \n    --label=\"${hostname}\" \\ \n    --os=\"${os_id}\" \\ \n    --plan=\"${plan_id}\" \\ \n    --private-network=\"${private_network}\" \\ \n    --region=\"${region_id}\" \\ \n    --ipv6=\"${enable_ipv6}\" \\ \n    --ddos=\"${ddos_protection}\" \\ \n    --notify=\"false\" \\ \n    ${extra_args} \n\n"
 	echo "Type YES to create instance"
 	read input
 
 	if [[ ${input} == 'YES' ]]
 	then
         	vultr-cli server create \
-        		--host ${hostname} \
-        		--label ${hostname} \
-        		--os ${os_id} \
-        		--plan ${plan_id} \
-        		--private-network ${private_network} \
-        		--region ${region_id} \
-        		--ipv6 ${enable_ipv6} \
-        		--ddos ${ddos_protection} \
-        		--notify false \
+        		--host="${hostname}" \
+        		--label="${hostname}" \
+        		--os="${os_id}" \
+        		--plan="${plan_id}" \
+        		--private-network="${private_network}" \
+        		--region="${region_id}" \
+        		--ipv6="${enable_ipv6}" \
+        		--ddos="${ddos_protection}" \
+        		--notify=false \
         		${extra_args}
 	fi
 

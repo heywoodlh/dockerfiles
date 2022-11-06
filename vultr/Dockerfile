@@ -7,4 +7,4 @@ RUN apt-get update && apt-get install -y coreutils jq fzf openssh-client mosh \
 RUN mv /go/bin/vultr-cli /usr/bin/vultr-cli
 COPY vultr.sh /vultr.sh
 
-ENTRYPOINT "/vultr.sh"
+ENTRYPOINT ["/vultr.sh"]
