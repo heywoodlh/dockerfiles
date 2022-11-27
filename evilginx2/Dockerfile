@@ -18,6 +18,8 @@ WORKDIR /app
 COPY --from=build /go/src/github.com/hash3liZer/evilginx2/bin/evilginx /app/evilginx
 COPY --from=build /go/src/github.com/hash3liZer/phishlets/*.yaml /app/phishlets/
 
+VOLUME /app/phishlets
+
 RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates &&\
 	rm -rf /var/lib/apt/lists/*
 
