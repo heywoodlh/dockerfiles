@@ -1,4 +1,4 @@
-FROM debian
+FROM debian:unstable
 MAINTAINER heywoodlh
 
 RUN apt-get update && apt-get install -y --no-install-recommends openssh-server \
@@ -10,7 +10,6 @@ RUN sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_conf
 RUN echo 'AuthorizedKeysFile ~/.ssh/authorized_keys' >> /etc/ssh/sshd_config
 RUN passwd -l ssh-user
 RUN mkdir -p /run/sshd
-
 
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D", "-e"]
