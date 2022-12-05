@@ -3,14 +3,14 @@
 
 process_pid="$$"
 
-actions='instance-create\ninstance-destroy\ninstance-list\ninstance-start\ninstance-reboot\ninstance-shutdown'
+actions='instance-create\ninstance-destroy\ninstance-list\ninstance-start\ninstance-reboot\ninstance-shutdown\ninstance-details'
 
 if [[ -n $1 ]]
 then
 	action="$1"
 	if [[ ${action} == '--help' ]]
 	then
-		printf "$0 [instance-create instance-destroy instance-list instance-start instance-reboot instance-shutdown]"
+		printf "$0 [instance-create instance-destroy instance-list instance-start instance-reboot instance-shutdown instance-details]"
 	fi
 else
 	action="$(printf ${actions} | fzf)"
@@ -178,3 +178,11 @@ then
 	[[ -n ${instance_id} ]] && vultr-cli instance start ${instance_id}
 fi
 
+if [[ ${action} == 'instance-details' ]]
+then
+	instance_list=$(vultr-cli instance list | grep -vE '^ID' | sed -n '/^===/q;p')
+	instance="$(printf "${instance_list}" | fzf --prompt="Instance to get:")"
+	instance_id="$(printf "${instance}" | awk '{print $1}')"
+
+	[[ -n ${instance_id} ]] && vultr-cli instance get ${instance_id}
+fi
