@@ -24,8 +24,8 @@ then
 	plans_list="$(vultr-cli plans list | grep -vE '^ID' | sed -n '/^===/q;p')"
 	regions_list="$(vultr-cli regions list | grep -vE '^ID' | sed -n '/^===/q;p')"
 	regions_list="$(printf "${regions_list}" | grep 'Los Angeles' && printf "${regions_list}" | grep 'US' | grep -v 'Los Angeles' && printf "${regions_list}" | grep -v 'US')"
-	os_list="$(vultr-cli os list | grep -vE '^ID' | grep -E 'Arch Linux|Debian 11|Ubuntu 22.04' | sed -n '/^===/q;p')"
-	os_list="$(printf "${os_list}" | grep -E 'Arch Linux' && printf "${os_list}" | grep -vE 'Arch Linux')"
+	os_list="$(vultr-cli os list | grep -vE '^ID' | grep -E 'Arch Linux|Ubuntu 22.04' | sed -n '/^===/q;p')"
+	os_list="$(printf "${os_list}" | grep -E 'Ubuntu' && printf "${os_list}" | grep -vE 'Ubuntu')"
 
 	until [[ -n ${hostname} ]]
 	do
@@ -36,7 +36,7 @@ then
 	os_id="$(printf "${os_list}" | fzf --prompt="OS:" | awk '{print $1}')"
 	if [[ -z ${os_id} ]]
 	then
-		os_id=$(vultr-cli os list | grep 'Arch Linux' | head -1 | awk '{print $1}')
+		os_id=$(vultr-cli os list | grep 'Ubuntu' | head -1 | awk '{print $1}')
 	fi
 
 	plan_id="$(printf "${plans_list}" | fzf | awk '{print $1}')"
@@ -134,7 +134,7 @@ fi
 
 if [[ ${action} == 'instance-list' ]]
 then
-	 vultr-cli instance list | sed -n '/^===/q;p'	
+	vultr-cli instance list | sed -n '/^===/q;p'	
 fi
 
 if [[ ${action} == 'instance-destroy' ]]
