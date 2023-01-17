@@ -2,9 +2,11 @@
 
 if [[ -n ${USER} ]]
 then
+	USER=$(echo -n ${USER} | tr -d '[:space:]')
 	[[ -z ${PASSWORD} ]] && export PASSWORD='attacker'
 	[[ -z ${UUID} ]] && export UUID=1020
 	[[ -z ${GUID} ]] && export GUID=1020
+	PASSWORD=$(echo -n ${PASSWORD} | tr -d '[:space:]')
 
 	# Create the user account
 	groupadd --gid ${GUID} ${USER}
