@@ -23,4 +23,8 @@ then
 	mkdir -p /home/${USER}/.config
 	tar -C /home/${USER}/.config -xf /opt/xfce4.tar.gz
 	chown -R ${USER} /home/${USER}/.config
-fi	
+	mkdir -p /home/${USER}/Desktop 
+	cp /usr/share/applications/maltego.desktop /home/${USER}/Desktop
+	chmod +x /home/${USER}/Desktop/maltego.desktop
+	chown -R ${USER} /home/${USER}/Desktop
+fi
