@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     terminfo \
     curl \
     libcurl4 \
-    libicu71 \
+    libicu-dev \
     libssl3 \
     liblttng-ust1 \
     libunwind8 \
