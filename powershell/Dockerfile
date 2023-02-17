@@ -1,5 +1,5 @@
 ## Figure out how to get Powershell latest version number
-FROM ubuntu:devel AS download
+FROM ubuntu:latest AS download
 
 RUN apt-get update \
     && apt-get install -y curl jq \
@@ -9,7 +9,7 @@ RUN apt-get update \
 COPY download.sh /download.sh
 RUN /download.sh 
 
-FROM ubuntu:devel 
+FROM ubuntu:latest
 LABEL maintainer=heywoodlh
 
 ## Dependencies for Powershell
