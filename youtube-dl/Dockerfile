@@ -1,10 +1,10 @@
-FROM alpine:latest
+FROM python:3.10
 LABEL MAINTAINER=heywoodlh
 
-RUN apk --no-cache add youtube-dl shadow
+RUN pip3 install --upgrade youtube-dl
 
-RUN useradd -m -s /bin/ash youtube-dl
+RUN useradd -m -s /bin/bash youtube-dl
 
 USER youtube-dl
 
-ENTRYPOINT ["youtube-dl"]
+ENTRYPOINT ["/usr/local/bin/youtube-dl"]
