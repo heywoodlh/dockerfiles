@@ -83,24 +83,6 @@ jobs:
           tags: heywoodlh/evilginx2:latest,heywoodlh/evilginx2:${{ steps.date.outputs.date }}
         if: always()
       -
-        name: Build and push second
-        uses: docker/build-push-action@v2
-        with:
-          context: second
-          platforms: linux/amd64,linux/arm64,linux/armhf
-          push: true
-          tags: heywoodlh/second:latest,heywoodlh/second:${{ steps.date.outputs.date }}
-        if: always()
-      -
-        name: Build and push cloudtube
-        uses: docker/build-push-action@v2
-        with:
-          context: cloudtube
-          platforms: linux/amd64,linux/arm64,linux/armhf
-          push: true
-          tags: heywoodlh/cloudtube:latest,heywoodlh/cloudtube:${{ steps.date.outputs.date }}
-        if: always()
-      -
         name: Build and push flan-scan
         uses: docker/build-push-action@v2
         with:
