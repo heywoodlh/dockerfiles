@@ -1,13 +1,19 @@
 FROM docker.io/lizardbyte/sunshine:nightly-archlinux
 LABEL MAINTAINER=heywoodlh
 
-RUN pacman -Sy --noconfirm steam \
+USER root
+
+RUN printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf \
+    && pacman -Sy --noconfirm steam \
     && pacman -Scc --noconfirm 
 
-RUN useradd -m -s /bin/bash steam 
+RUN mkdir -p /steam &&\
+    chown -R lizard /steam &&\
+    mkdir -p /home/lizard/.local/share &&\
+    ln -s /steam /home/lizard/.local/share/Steam &&\
+    chown -R lizard /home/lizard/.local
 
-RUN mkdir -p /steam &&
-    chown -R steam:steam /steam
+USER lizard
 
 VOLUME /steam
 
