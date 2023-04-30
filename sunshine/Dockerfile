@@ -4,7 +4,7 @@ LABEL MAINTAINER=heywoodlh
 USER root
 
 RUN printf "[multilib]\nInclude = /etc/pacman.d/mirrorlist\n" >> /etc/pacman.conf \
-    && pacman -Sy --noconfirm steam nvidia \
+    && pacman -Sy --noconfirm steam nvidia nvidia-utils lib32-nvidia-utils \
     && pacman -Scc --noconfirm 
 
 RUN mkdir -p /steam &&\
