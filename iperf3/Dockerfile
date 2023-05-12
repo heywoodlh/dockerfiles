@@ -8,4 +8,4 @@ RUN apt-get update \
 USER iperf3
 
 EXPOSE 5201
-ENTRYPOINT ["iperf3", "--server"]
+ENTRYPOINT ["iperf3"]
