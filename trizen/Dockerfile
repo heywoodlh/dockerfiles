@@ -1,6 +1,6 @@
 FROM heywoodlh/archlinux AS base
 
-RUN pacman -Sy --noconfirm sudo shadow binutils fakeroot git pacutils perl-libwww perl-term-ui perl-json perl-data-dump perl-lwp-protocol-https perl-term-readline-gnu
+RUN pacman -Sy --noconfirm sudo shadow binutils fakeroot git pacutils perl-libwww perl-term-ui perl-json perl-data-dump perl-lwp-protocol-https perl-term-readline-gnu openssl-1.1
 
 RUN mkdir -p /etc/sudoers.d/ \
 	&& echo 'trizen ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/trizen
@@ -24,7 +24,7 @@ RUN sudo pacman -Scc --noconfirm \
 ## docker build -t heywoodlh/trizen-test --target=test .
 ## docker run -it --rm heywoodlh/trizen-test
 ## These packages are just random ones I selected
-FROM base AS test 
+FROM base AS test
 CMD ["trizen", "-Sy", "--noconfirm", "curl", "vim-coc-bin"]
 
 ## Final stage
