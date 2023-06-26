@@ -6,7 +6,7 @@ RUN git clone https://git.sr.ht/~sircmpwn/scdoc /opt/scdoc
 WORKDIR /opt/scdoc
 RUN make && make install
 
-RUN git clone https://git.sr.ht/~sircmpwn/aerc /opt/aerc
+RUN git clone https://git.sr.ht/~rjarry/aerc /opt/aerc
 WORKDIR /opt/aerc
 RUN make && make install
 
