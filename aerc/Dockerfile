@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y git \
 	dante-server \
 	dante-client \
 	pass \
+        pandoc colorize \
 	khard \
 	fzf \
 	&& rm -rf /var/lib/apt/lists/*
