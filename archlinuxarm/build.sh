@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 qemu_version="v6.1.0-8"
-arch_target=("arm64" "armv7")
+arch_target=("arm64")
 root_dir=$(pwd)
 date_tag=$(date +%Y_%m_snapshot)
 
@@ -12,10 +12,9 @@ do
 	cd ${target_dir}
 
 	[[ ${arch} == "arm64" ]] && carch="aarch64" && darch="linux/arm64" && qemu_arch="aarch64" && label="arm64"
-	[[ ${arch} == "armv7" ]] && carch="armv7" && darch="linux/arm/v7" && qemu_arch="arm" && label="armv7"
 
 	wget -nc http://il.us.mirror.archlinuxarm.org/os/ArchLinuxARM-${carch}-latest.tar.gz
-	
+
 	wget -nc https://github.com/multiarch/qemu-user-static/releases/download/${qemu_version}/qemu-${qemu_arch}-static -O qemu-${qemu_arch}-static
 	chmod +x qemu-${qemu_arch}-static
 
@@ -31,9 +30,8 @@ images=""
 for arch in "${arch_target[@]}"
 do
 	[[ ${arch} == "arm64" ]] && label="arm64"
-	[[ ${arch} == "armv7" ]] && label="armv7"
 	images+="heywoodlh/archlinuxarm:${label} "
 done
 
-docker buildx imagetools create --tag heywoodlh/archlinuxarm:latest ${images} 
-docker buildx imagetools create --tag heywoodlh/archlinuxarm:${date_tag} ${images} 
+docker buildx imagetools create --tag heywoodlh/archlinuxarm:latest ${images}
+docker buildx imagetools create --tag heywoodlh/archlinuxarm:${date_tag} ${images}
