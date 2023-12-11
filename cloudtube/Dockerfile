@@ -1,4 +1,4 @@
-FROM node:lts-buster
+FROM node:18-bullseye
 LABEL maintainer=heywoodlh
 
 ENV DEBIAN_FRONTEND noninteractive
