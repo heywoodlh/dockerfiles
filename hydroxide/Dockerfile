@@ -1,4 +1,4 @@
-FROM golang:1.16-buster AS build
+FROM golang:1.22.0-bullseye AS build
 
 RUN git clone https://github.com/emersion/hydroxide /opt/hydroxide
 
@@ -8,7 +8,7 @@ RUN sed -ie '310,313d' /opt/hydroxide/imap/mailbox.go
 WORKDIR /opt/hydroxide
 RUN GO111MODULE=on go build ./cmd/hydroxide
 
-FROM debian:buster
+FROM debian:bullseye-slim
 
 RUN apt-get update && apt-get install -y ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
