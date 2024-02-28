@@ -8,4 +8,4 @@ VOLUME /out
 COPY services.sh /entrypoint
 USER 1001
 
-ENTRYPOINT ["/entrypoint", "|", "tee", "/out/services.txt"]
+ENTRYPOINT ["/entrypoint", "|", "sort", "-u", "|", "tee", "/out/services.txt"]
