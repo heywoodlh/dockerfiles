@@ -1,10 +1,9 @@
-FROM debian:unstable
+FROM alpine:latest
 LABEL maintainer=heywoodlh
 
-RUN apt-get update \
-	&& apt-get install -y iperf3 \
-	&& rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main iperf3
 
+RUN addgroup -S iperf3 && adduser -S iperf3 -G iperf3
 USER iperf3
 
 EXPOSE 5201
