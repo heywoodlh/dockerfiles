@@ -6,6 +6,8 @@ export NIX_INSTALLED="true"
 if [[ ${NIX_INSTALLED} == "false" ]]
 then
   echo "Nix store absent, copying from original store"
+  cp -rn /nix-orig/* /nix/
+  chown -R 1000 /nix
 else
   echo "Nix is already installed."
 fi
@@ -21,3 +23,4 @@ then
 else
   echo "Shell profile is already installed."
 fi
+
