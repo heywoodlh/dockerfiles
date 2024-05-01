@@ -1,3 +1,7 @@
+FROM docker.io/heywoodlh/nix:latest AS ld-builder
+
+RUN mkdir -p /opt/glibc && nix build -o /opt/glibc nixpkgs#glibc
+
 FROM docker.io/kasmweb/core-debian-bookworm:1.15.0-rolling
 LABEL maintainer=heywoodlh
 
@@ -10,7 +14,12 @@ WORKDIR $HOME
 
 ######### Customize Container Here ###########
 
-RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux --init none --no-confirm \
+COPY --from=ld-builder /opt/glibc /opt/glibc
+
+ENV LD_LIBRARY_PATH=/opt/glibc/lib
+ENV NIX_CONFIG="filter-syscalls = false"
+
+RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux --init none --no-confirm --nix-build-group-id 31000 \
   && cp -r /nix /nix-orig \
   && cp -r /etc/profile.d /etc/profile.d-orig \
   && chown -R 1000:1000 /nix /nix-orig
