@@ -14,10 +14,21 @@ RUNNER_NAME="docker-${RUNNER_SUFFIX}"
 
 cd /home/docker/actions-runner
 
-# Issue token to self and initialize runner in repository
-REG_TOKEN=$(curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/runners/registration-token | jq .token --raw-output)
+if [[ -n "${REPO_TOKEN}" ]]
+then
+    echo "Using repo token for auth"
+    REG_TOKEN="${REPO_TOKEN}"
+elif [[ -n "${GH_TOKEN}" ]]
+then
+    echo "Using personal access token for auth"
+    # Issue token to self and initialize runner in repository
+    REG_TOKEN=$(curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/runners/registration-token | jq .token --raw-output)
+else
+    echo "Critical error, REPO_TOKEN and GH_TOKEN are undefined. Exiting."
+    exit 1
+fi
 
-/home/docker/actions-runner/config.sh --url https://github.com/${GH_OWNER}/${GH_REPO} --token ${REG_TOKEN}
+/home/docker/actions-runner/config.sh --url https://github.com/${GH_OWNER}/${GH_REPO} --token ${REG_TOKEN} --replace
 
 # Will remove self when container is destroyed
 cleanup() {
