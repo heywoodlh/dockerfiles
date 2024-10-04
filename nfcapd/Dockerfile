@@ -15,4 +15,7 @@ EXPOSE 9995
 
 USER nfdump
 ENTRYPOINT ["nfcapd"]
-CMD ["-w", "-S", "2", "-l", "/flows/", "-p", "9995"]
+# -l: base directory
+# -p: port
+# -S 2: %Y/%m/%d/%H year/month/day/hour subdir format
+CMD ["-w", "/flows", "-p", "9995", "-S", "2"]
