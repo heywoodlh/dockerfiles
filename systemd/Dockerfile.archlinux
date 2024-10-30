@@ -1,0 +1,6 @@
+FROM docker.io/heywoodlh/archlinux:latest
+RUN pacman -Sy --noconfirm systemd systemd-sysvcompat \
+    && pacman -Scc --noconfirm \
+    && rm /var/lib/pacman/sync/*
+COPY systemd.sh /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]

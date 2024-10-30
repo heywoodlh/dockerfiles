@@ -1,0 +1,3 @@
+FROM docker.io/centos:latest
+COPY systemd.sh /docker-entrypoint.sh
+ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -1,0 +1,11 @@
+FROM docker.io/alpine
+
+RUN apk add --no-cache openrc
+RUN mkdir -p /run/openrc && touch /run/openrc/softlevel
+RUN sed -i 's/VSERVER/DOCKER/Ig' /lib/rc/sh/init.sh
+
+# configured /etc/rc.conf for docker
+RUN sed -i '/getty/d' /etc/inittab
+
+COPY openrc.sh /openrc.sh
+ENTRYPOINT ["/openrc.sh"]
