@@ -1,0 +1,27 @@
+services:
+  client:
+    hostname: client
+    build:
+      context: .
+      target: client
+    restart: unless-stopped
+    environment:
+      - SERVER_ADDRESS="server"
+      - SERVER_PORT=1337
+    networks:
+      - net-1
+    depends_on:
+      - server
+  server:
+    hostname: server
+    build:
+      context: .
+      target: server
+    restart: unless-stopped
+    networks:
+      - net-1
+    environment:
+      - LISTEN_PORT=1337
+
+networks:
+  net-1:
