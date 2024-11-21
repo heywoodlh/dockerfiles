@@ -18,8 +18,13 @@ FROM alpine:latest AS static
 COPY --from=static-fetcher /nix-bin /usr/bin/nix
 ENV NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
-RUN apk add --no-cache curl bash \
-    && addgroup nixbld
+# Add dependencies and create build users
+RUN apk add --no-cache curl bash shadow \
+    && mkdir -p /etc/nix \
+    && groupadd nixbld \
+    && for n in $(seq 1 10); do useradd -c "Nix build user $n" \
+    -d /var/empty -g nixbld -G nixbld -M -N -r -s "$(which nologin)" \
+    nixbld$n; done
 
 # Testing targets
 FROM base AS test
