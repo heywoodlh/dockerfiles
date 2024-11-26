@@ -1,16 +1,27 @@
-FROM heywoodlh/conf:latest
+FROM docker.io/heywoodlh/nix:latest
 LABEL MAINTAINER=heywoodlh
 
-USER root
-RUN apk --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing add ttyd openssh-server mosh supervisor runuser neofetch
+RUN apt update && apt install -y curl ttyd openssh-server mosh supervisor sudo \
+    && rm -rf /var/lib/apt/lists/*
 
+RUN userdel ubuntu \
+    && addgroup --gid 1000 heywoodlh \
+    && useradd --shell /bin/bash --uid 1000 --gid 1000 --create-home --home-dir /home/heywoodlh heywoodlh \
+    && mkdir -p /etc/sudoers.d \
+    && echo "heywoodlh ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/heywoodlh \
+    && touch /home/heywoodlh/.hushlogin \
+    && chown heywoodlh:heywoodlh /home/heywoodlh/.hushlogin \
+    && chown -R heywoodlh:heywoodlh /nix
+
+USER heywoodlh
+ENV HOME=/home/heywoodlh
+RUN curl -H 'Cache-Control: no-cache' -L https://files.heywoodlh.io/scripts/linux.sh | bash -s -- server \
+    && rm -rf /home/heywoodlh/.cache/nix/
+
+USER root
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY sshd.sh /sshd.sh
-
-## Setup SSH
-RUN usermod -p '*' heywoodlh \
-    && echo '' | tee /etc/motd
-
+COPY ttyd.sh /ttyd.sh
 EXPOSE 22
-EXPOSE 7681
+EXPOSE 8080
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

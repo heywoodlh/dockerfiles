@@ -1,0 +1,26 @@
+services:
+  dev:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "2222:22"
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+      - TTYD_USER=admin
+      - TTYD_PASS=admin
+    depends_on:
+      - dind
+    volumes:
+      - certs:/certs
+  dind:
+    image: docker.io/docker:dind
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - certs:/certs
+
+volumes:
+  certs:
