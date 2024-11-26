@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script to test out multi-arch container build
+# Script to test out multi-arch container build, to replicate GitHub Actions behavior
 # docker buildx behaves differently from docker build (i.e. in GitHub Actions)
 
 arch_target=("amd64" "arm64")
