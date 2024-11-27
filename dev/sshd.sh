@@ -7,5 +7,5 @@ sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g' /etc/ssh/sshd_config
 
 mkdir -p /run/sshd
 
-[[ -e /etc/ssh/sshd_config ]] && /usr/sbin/sshd -D -e -f /etc/ssh/sshd_config
-[[ ! -e /etc/ssh/sshd_config ]] && /usr/sbin/sshd -D -e
+[[ -e /etc/ssh/sshd_config ]] && /usr/sbin/sshd -D -E /var/log/sshd.log -f /etc/ssh/sshd_config
+[[ ! -e /etc/ssh/sshd_config ]] && /usr/sbin/sshd -D -E /var/log/sshd.log
