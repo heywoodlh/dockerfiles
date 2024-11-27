@@ -15,6 +15,8 @@ services:
       - dind
     volumes:
       - certs:/certs
+      - nix:/nix
+      - heywoodlh-home:/home/heywoodlh
   dind:
     image: docker.io/docker:dind
     restart: unless-stopped
@@ -24,3 +26,5 @@ services:
 
 volumes:
   certs:
+  nix:
+  heywoodlh-home:

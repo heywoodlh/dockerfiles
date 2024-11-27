@@ -15,13 +15,16 @@ RUN userdel ubuntu \
 
 USER heywoodlh
 ENV HOME=/home/heywoodlh
-RUN curl -H 'Cache-Control: no-cache' -L https://files.heywoodlh.io/scripts/linux.sh | bash -s -- server \
-    && rm -rf /home/heywoodlh/.cache/nix/
 
 USER root
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY sshd.sh /sshd.sh
 COPY ttyd.sh /ttyd.sh
+COPY heywoodlh.sh /heywoodlh.sh
 EXPOSE 22
 EXPOSE 8080
+
+VOLUME /nix
+VOLUME /home/heywoodlh
+
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
