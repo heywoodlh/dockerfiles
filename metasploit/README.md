@@ -13,7 +13,15 @@ alias msfconsole='mkdir -p ~/.local/metasploit && docker run -it --rm --net host
 alias msfvenom='mkdir -p ~/.local/metasploit && docker run -it --rm -v ~/.local/metasploit/:/root/.msf4 -w /root/session -v $(pwd):/root/session heywoodlh/metasploit msfvenom $@'
 ```
 
-A very simple `docker-compose.yml` file is available here: https://github.com/heywoodlh/dockerfiles/blob/master/metasploit/docker-compose.yml
+### Docker Compose:
+
+A very simple `docker-compose.yml` file is available here: <https://github.com/heywoodlh/dockerfiles/blob/master/metasploit/docker-compose.yml>
+
+Attach to the Metasploit container defined in the `docker-compose.yml` file with this command:
+
+```
+docker compose run --rm metasploit; docker compose down
+```
 
 ## Issues:
 

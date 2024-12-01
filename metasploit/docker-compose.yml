@@ -1,12 +1,22 @@
-version: "3.9"
 services:
+  # Run with: docker compose run --rm metasploit
   metasploit:
-    image: "heywoodlh/metasploit:latest"
-    command: "tail -F /dev/null"
+    image: "docker.io/heywoodlh/metasploit:latest"
+    command: "msfconsole --quiet --execute-command 'db_connect postgres:msf@db:5432/msf'"
     tty: true
+    stdin_open: true
+    volumes:
+      - msf_data:/root/.msf4
+    links:
+      - db
   db:
-    image: "postgres:14"
-    environment: 
-      POSTGRES_USER: msf
-      POSTGRES_PASSWORD: msf 
+    image: "docker.io/postgres:14"
+    volumes:
+      - msf_database:/var/lib/postgresql/data
+    environment:
       POSTGRES_DB: msf
+      POSTGRES_PASSWORD: msf
+
+volumes:
+  msf_database:
+  msf_data:
