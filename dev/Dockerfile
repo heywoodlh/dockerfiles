@@ -1,8 +1,16 @@
+FROM docker.io/heywoodlh/nix:latest AS ttyd-builder
+
+RUN nix bundle --bundler "github:nixos/bundlers#toDEB" "github:heywoodlh/flakes?dir=ttyd-nerd" -o /ttyd
+
 FROM docker.io/heywoodlh/nix:latest
 LABEL MAINTAINER=heywoodlh
 
-RUN apt update && apt install -y curl ttyd openssh-server mosh supervisor sudo \
-    && rm -rf /var/lib/apt/lists/*
+COPY --from=ttyd-builder /ttyd /ttyd
+
+RUN apt update && apt install -y curl openssh-server mosh supervisor sudo \
+    && dpkg -i /ttyd/*.deb \
+    && rm -rf /var/lib/apt/lists/* #\
+    && rm -rf /ttyd
 
 RUN userdel ubuntu \
     && addgroup --gid 1000 heywoodlh \
