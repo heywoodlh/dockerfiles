@@ -3,7 +3,7 @@ FROM docker.io/ubuntu AS base
 # https://github.com/DeterminateSystems/nix-installer/issues/1305#issuecomment-2494150324
 RUN apt update \
     && apt install -y curl \
-    && curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix/pr/1311 | sh -s -- install linux \
+    && curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
       --extra-conf "sandbox = false" \
       --init none \
       --no-confirm \
