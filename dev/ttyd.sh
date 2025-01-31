@@ -12,7 +12,7 @@ COMMAND="/bin/bash"
 
 if [[ -e /home/heywoodlh/.nix-profile/bin/ttyd ]]
 then
-    /home/heywoodlh/.nix-profile/bin/ttyd -W -t fontSize=16 -t fontFamily="JetBrains" -p 80 --uid 1000 --gid 1000 -w /home/heywoodlh --writable ${TTYD_ARGS} ${COMMAND}
+    /home/heywoodlh/.nix-profile/bin/ttyd -W -t fontSize=16 -t fontFamily="JetBrains Mono Regular" -p 80 --uid 1000 --gid 1000 -w /home/heywoodlh --writable ${TTYD_ARGS} ${COMMAND}
 else
-    /usr/bin/ttyd -W -t fontSize=16 -t fontFamily="JetBrains" -p 80 --uid 1000 --gid 1000 -w /home/heywoodlh --writable ${TTYD_ARGS} ${COMMAND}
+    /usr/bin/ttyd -W -t fontSize=16 -t fontFamily="JetBrains Mono Regular" -p 80 --uid 1000 --gid 1000 -w /home/heywoodlh --writable ${TTYD_ARGS} ${COMMAND}
 fi
