@@ -7,8 +7,13 @@ then
     TTYD_ARGS="${TTYD_ARGS} --credential ${TTYD_USER}:${TTYD_PASS}"
 fi
 
-COMMAND="/bin/bash"
-[[ -e /home/heywoodlh/.nix-profile/bin/tmux ]] && COMMAND="/home/heywoodlh/.nix-profile/bin/tmux"
+if [[ -z "$1" ]]
+then
+    COMMAND="/bin/bash"
+    [[ -e /home/heywoodlh/.nix-profile/bin/tmux ]] && COMMAND="/home/heywoodlh/.nix-profile/bin/tmux"
+else
+    COMMAND="$1"
+fi
 
 if [[ -e /home/heywoodlh/.nix-profile/bin/ttyd ]]
 then
