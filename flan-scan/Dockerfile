@@ -3,7 +3,7 @@ FROM alpine:latest as build
 RUN apk --no-cache add git \
 	&& git clone https://github.com/cloudflare/flan /opt/flan
 
-FROM python:3-alpine
+FROM python:3.9-alpine AS base
 LABEL maintainer=heywoodlh
 
 COPY --from=build /opt/flan/aws_push.py /
@@ -20,5 +20,7 @@ RUN apk add --no-cache nmap nmap-scripts git \
     && nmap --script-updatedb \
     && apk del git \
     && chmod +x /run.sh
+
+FROM base
 
 ENTRYPOINT ["/bin/sh", "-c", "/run.sh"]
