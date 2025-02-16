@@ -7,7 +7,7 @@ export MAJOR_VERSION_NUMBER=$(echo $VERSION_TAG | cut -d '.' -f 1 | tr -d 'v')
 
 export arch=$(arch)
 
-## Logic to match Powershell repo's arch 
+## Logic to match Powershell repo's arch
 [[ ${arch} == 'x86_64' ]] && export release_arch='x64'
 [[ ${arch} == 'aarch64' ]] && export release_arch='arm64'
 [[ ${arch} == 'armv7l' ]] && export release_arch='arm32'

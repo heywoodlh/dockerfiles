@@ -1,5 +1,6 @@
+ARG ubuntu_version=24.04
 ## Figure out how to get Powershell latest version number
-FROM ubuntu:latest AS download
+FROM ubuntu:${ubuntu_version} AS download
 
 RUN apt-get update \
     && apt-get install -y curl jq \
@@ -7,9 +8,9 @@ RUN apt-get update \
 
 ## Script parses latest Powershell version and downloads it
 COPY download.sh /download.sh
-RUN /download.sh 
+RUN /download.sh
 
-FROM ubuntu:latest
+FROM ubuntu:${ubuntu_version}
 LABEL maintainer=heywoodlh
 
 ## Dependencies for Powershell
@@ -18,10 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     less \
     terminfo \
     curl \
-    libcurl4 \
     libicu-dev \
-    libssl3 \
-    liblttng-ust1 \
     libunwind8 \
     && rm -rf /var/lib/apt/lists/*
 
