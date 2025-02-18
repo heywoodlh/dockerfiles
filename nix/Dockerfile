@@ -18,7 +18,8 @@ FROM base AS static-fetcher
 
 # Hydra Nix project: https://hydra.nixos.org/project/nix
 # Example 2.24 version job list URL: https://hydra.nixos.org/jobset/nix/maintenance-2.24#tabs-jobs
-RUN curl -L https://hydra.nixos.org/job/nix/maintenance-$(nix --version | awk '{print $3}' | cut -d'.' -f1-2)/buildStatic.nix.$(arch)-linux/latest/download-by-type/file/binary-dist -o /nix-bin \
+# Related issue https://github.com/NixOS/nixpkgs/issues/357949#issuecomment-2528781690
+RUN curl -L https://hydra.nixos.org/job/nix/master/buildStatic.$(arch)-linux/latest/download-by-type/file/binary-dist -o /nix-bin \
     && chmod +x /nix-bin
 
 # static target
@@ -41,3 +42,4 @@ RUN nix run nixpkgs#hello
 
 FROM static AS static-test
 RUN nix run nixpkgs#hello
+
