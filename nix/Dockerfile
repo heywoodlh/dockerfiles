@@ -14,23 +14,27 @@ RUN apt update \
 ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
 # Target for building the static nix binaries
-FROM base AS static-fetcher
+FROM docker.io/curlimages/curl AS static-fetcher
+
+USER root
 
 # Hydra Nix project: https://hydra.nixos.org/project/nix
 # Example 2.24 version job list URL: https://hydra.nixos.org/jobset/nix/maintenance-2.24#tabs-jobs
 # Related issue https://github.com/NixOS/nixpkgs/issues/357949#issuecomment-2528781690
-RUN curl -L https://hydra.nixos.org/job/nix/master/buildStatic.$(arch)-linux/latest/download-by-type/file/binary-dist -o /nix-bin \
-    && chmod +x /nix-bin
+RUN curl -L https://hydra.nixos.org/job/nix/maintenance-2.25/buildStatic.nix.$(arch)-linux/latest/download-by-type/file/binary-dist -o /nix \
+    && chmod +x /nix \
+    && /nix --version
 
 # static target
 FROM alpine:latest AS static
 
-COPY --from=static-fetcher /nix-bin /usr/bin/nix
+COPY --from=static-fetcher /nix /usr/bin/nix
 ENV NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
 # Add dependencies and create build users
 RUN apk add --no-cache curl bash shadow \
     && mkdir -p /etc/nix \
+    && mkdir -p /nix \
     && groupadd nixbld \
     && for n in $(seq 1 10); do useradd -c "Nix build user $n" \
     -d /var/empty -g nixbld -G nixbld -M -N -r -s "$(which nologin)" \
