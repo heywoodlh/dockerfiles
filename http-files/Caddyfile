@@ -1,0 +1,4 @@
+:80 {
+	root * /web
+	file_server browse
+}
