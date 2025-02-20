@@ -1,6 +1,6 @@
 #!/bin/sh
 dir=$(dirname -- "$( readlink -f -- "$0"; )";)
-dockerfile="Dockerfile.alpine"
+dockerfile="Dockerfile"
 set -ex
 echo "=== Testing ${dockerfile} ==="
 iid=$(docker build -q -f ${dir}/${dockerfile} ${dir})
