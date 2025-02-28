@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-operating_systems=("ubuntu" "debian" "centos" "archlinux")
+operating_systems=("ubuntu" "debian" "fedora" "archlinux")
 dir=$(dirname -- "$( readlink -f -- "$0"; )";)
 date_tag=$(date +%Y_%m_snapshot)
 
@@ -8,7 +8,7 @@ do
   arches="amd64,arm64"
   # Skip arm64 if archlinux
   [[ ${os} == "archlinux" ]] && arches="amd64"
-	docker buildx build --no-cache --platform "${arches}" --squash -t "heywoodlh/systemd:${os}" -t "docker.io/heywoodlh/systemd:${os}_${date_tag}" -f ${dir}/Dockerfile.${os} . --push
+  docker buildx build --no-cache --platform "${arches}" --squash -t "heywoodlh/systemd:${os}" -t "docker.io/heywoodlh/systemd:${os}_${date_tag}" -f "${dir}/Dockerfile.${os}" . --push
 done
 
 # Set default image to Ubuntu

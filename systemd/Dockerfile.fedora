@@ -1,3 +1,4 @@
-FROM docker.io/centos:latest
+FROM docker.io/fedora:latest
 COPY systemd.sh /docker-entrypoint.sh
+RUN dnf -y install systemd && dnf clean all
 ENTRYPOINT ["/docker-entrypoint.sh"]

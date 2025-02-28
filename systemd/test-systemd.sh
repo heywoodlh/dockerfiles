@@ -1,6 +1,6 @@
 #!/bin/bash
 dir=$(dirname -- "$( readlink -f -- "$0"; )";)
-dockerfiles=("Dockerfile.centos" "Dockerfile.debian")
+dockerfiles=("Dockerfile.ubuntu" "Dockerfile.debian" "Dockerfile.fedora" "Dockerfile.archlinux")
 
 set -ex
 for dockerfile in "${dockerfiles[@]}"; do
