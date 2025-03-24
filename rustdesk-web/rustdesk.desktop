@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=RustDesk
+GenericName=Remote Desktop
+Comment=Remote Desktop
+Exec=/usr/bin/rustdesk %u
+Icon=rustdesk.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Network;RemoteAccess;GTK;
+Keywords=internet;
+Actions=new-window;
+
+X-Desktop-File-Install-Version=0.23
+
+Path=
+
+[Desktop Action new-window]
+Name=Open a New Window
+Exec=rustdesk %u
