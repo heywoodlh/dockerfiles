@@ -1,0 +1,96 @@
+FROM docker.io/alpine:latest AS base
+
+RUN apk --no-cache add bash curl git
+
+ENV UID=1000
+ENV GID=1000
+
+RUN addgroup --gid "1000" "vim" \
+    && adduser \
+       --disabled-password \
+       --gecos "" \
+       --home "/home/vim-user" \
+       --ingroup "vim" \
+       --uid "1000" \
+       vim
+
+ENTRYPOINT ["/bin/bash"]
+
+# vim base
+FROM base AS vim
+
+RUN apk --no-cache add vim --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main
+
+USER vim
+
+# neovim base
+FROM base AS neovim
+
+RUN apk --no-cache add neovim --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+    && ln -s /usr/bin/nvim /usr/local/bin/vim
+
+USER vim
+
+# pathogen-vim
+FROM vim AS pathogen-vim
+
+RUN mkdir -p ~/.vim/autoload ~/.vim/bundle \
+    && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+COPY vimrc/pathogen.vimrc /home/vim/.vimrc
+
+# pathogen-neovim
+FROM neovim AS pathogen-neovim
+
+RUN mkdir -p ~/.vim/autoload ~/.vim/bundle \
+    && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+COPY vimrc/pathogen.vimrc /home/vim/.vimrc
+
+# vim-plug stuff
+FROM base AS vim-plug-builder
+
+RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# vim-plug-vim
+FROM vim AS vim-plug-vim
+
+COPY --from=vim-plug-builder /home/vim/.vim/autoload /home/vim/.vim/autoload
+
+# vim-plug-neovim
+FROM neovim AS vim-plug-neovim
+
+COPY --from=vim-plug-builder /home/vim/.vim/autoload /home/vim/.vim/autoload
+
+# vundle stuff
+FROM base AS vundle-builder
+
+RUN git clone https://github.com/VundleVim/Vundle.vim.git /home/vim/.vim/bundle/Vundle.vim
+
+# vundle-vim
+FROM vim AS vundle-vim
+
+COPY --from=vundle-builder /home/vim/.vim/bundle /home/vim/.vim/bundle
+COPY vimrc/vundle.vimrc /home/vim/.vimrc
+
+# vundle-neovim
+FROM neovim AS vundle-neovim
+
+COPY --from=vundle-builder /home/vim/.vim/bundle /home/vim/.vim/bundle
+COPY vimrc/vundle.vimrc /home/vim/.vimrc
+
+# vundle-vim test
+FROM vundle-vim AS vundle-vim-test
+COPY tests/vundle/vundle.vimrc /home/vim/.vimrc
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+RUN chmod +x /test.sh && test.sh
+
+# vundle-vim test
+FROM vundle-neovim AS vundle-neovim-test
+COPY tests/vundle/vundle.vimrc /home/vim/.vimrc
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+RUN chmod +x /test.sh && test.sh

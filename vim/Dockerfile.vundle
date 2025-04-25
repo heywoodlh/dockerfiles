@@ -1,0 +1,31 @@
+FROM base AS vundle-builder
+
+RUN git clone https://github.com/VundleVim/Vundle.vim.git /home/vim/.vim/bundle/Vundle.vim
+
+# vundle-vim
+FROM vim AS vundle-vim
+
+COPY --from=vundle-builder /home/vim/.vim/bundle /home/vim/.vim/bundle
+COPY vimrc/vundle.vimrc /home/vim/.vimrc
+
+# vundle-neovim
+FROM neovim AS vundle-neovim
+
+COPY --from=vundle-builder /home/vim/.vim/bundle /home/vim/.vim/bundle
+COPY vimrc/vundle.vimrc /home/vim/.vimrc
+
+# vundle-vim test
+FROM vundle-vim AS vim-test
+COPY tests/vundle/vimrc /home/vim/.vimrc
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+RUN bash test.sh
+
+# vundle-vim test
+FROM vundle-neovim AS neovim-test
+COPY tests/vundle/vimrc /home/vim/.vimrc
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+RUN bash test.sh

@@ -1,0 +1,25 @@
+# vim-plug-vim
+FROM vim AS vim-plug-vim
+
+RUN curl -fLo /home/vim-user/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# vim-plug-neovim
+FROM neovim AS vim-plug-neovim
+
+RUN sh -c 'curl -fLo /home/vim-user/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+# vim-plug-vim test
+FROM vim-plug-vim AS vim-test
+COPY tests/vim-plug/vimrc /home/vim-user/.vimrc
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+RUN bash test.sh
+
+# vim-plug-vim test
+FROM vim-plug-neovim AS neovim-test
+COPY tests/vim-plug/vimrc /home/vim-user/.vimrc
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+RUN bash test.sh

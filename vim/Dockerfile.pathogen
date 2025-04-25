@@ -1,0 +1,33 @@
+# pathogen-vim
+FROM vim AS pathogen-vim
+
+RUN mkdir -p ~/.vim/autoload ~/.vim/bundle \
+    && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+COPY vimrc/pathogen.vimrc /home/vim/.vimrc
+
+# pathogen-neovim
+FROM neovim AS pathogen-neovim
+
+RUN mkdir -p ~/.vim/autoload ~/.vim/bundle \
+    && curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+COPY vimrc/pathogen.vimrc /home/vim/.vimrc
+
+# pathogen-vim test
+FROM pathogen-vim AS vim-test
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+COPY tests/pathogen/install.sh /install.sh
+RUN bash /install.sh \
+    && bash test.sh
+
+# pathogen-vim test
+FROM pathogen-neovim AS neovim-test
+COPY tests/test.sh /test.sh
+COPY tests/commands.vim /commands.vim
+
+COPY tests/pathogen/install.sh /install.sh
+RUN bash /install.sh \
+    && bash test.sh
