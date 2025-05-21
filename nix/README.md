@@ -1,4 +1,4 @@
-Nix image with Flakes enabled by default.
+Determinate Nix image with Flakes enabled by default.
 
 Dockerfile and build resources are here: https://github.com/heywoodlh/dockerfiles/tree/master/nix
 
@@ -9,6 +9,16 @@ GitHub Action to build this on a recurring basis: https://github.com/heywoodlh/a
 ```
 docker run -it --rm docker.io/heywoodlh/nix:latest nix run nixpkgs#hello
 ```
+
+### Statically linked Lix
+
+The nixStatic package is a bit neglected, see [Build failure: nixStatic (bash: Argument list too long)](https://github.com/NixOS/nixpkgs/issues/357949). This image also provides a statically linked [Lix](https://lix.systems) target that should serve as a drop-in replacement for Nix.
+
+Use these tags for an image with statically linked Lix:
+- `docker.io/heywoodlh/nix:lix`
+- `docker.io/heywoodlh/nix:lix-${version}`
+
+### Statically linked Nix
 
 There is also a static Nix image with the `static` tag:
 
