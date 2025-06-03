@@ -57,6 +57,8 @@ else
 	echo >&2 'ERROR: systemd is not installed'
 	exit 1
 fi
-systemd_args="--show-status=false --unit=docker-entrypoint.target"
+
+systemd_args="${ARGS} --show-status=false --unit=docker-entrypoint.target"
 echo "$0: starting $systemd $systemd_args"
+set -ex
 exec $systemd $systemd_args

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 dir=$(dirname -- "$( readlink -f -- "$0"; )";)
 dockerfiles=("Dockerfile.ubuntu" "Dockerfile.debian" "Dockerfile.fedora" "Dockerfile.archlinux")
 

@@ -1,7 +1,26 @@
-FROM ubuntu:latest
+FROM docker.io/ubuntu:24.04 AS repo-setup
+ENV DEBIAN_FRONTEND=noninteractive
+# Grab latest systemd versions from official systemd OBS repo
+RUN apt update \
+  && apt install -y curl gnupg \
+  && echo 'deb http://download.opensuse.org/repositories/system:/systemd/Ubuntu_24.04/ /' | tee /etc/apt/sources.list.d/system:systemd.list \
+  && curl -fsSL https://download.opensuse.org/repositories/system:systemd/Ubuntu_24.04/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/system_systemd.gpg > /dev/null > /dev/null
+
+FROM docker.io/ubuntu:24.04
+
+COPY --from=repo-setup /etc/apt/sources.list.d/system:systemd.list /etc/apt/sources.list.d/system:systemd.list
+COPY --from=repo-setup /etc/apt/trusted.gpg.d/system_systemd.gpg /etc/apt/trusted.gpg.d/system_systemd.gpg
+
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
-  systemd systemd-sysv dbus dbus-user-session \
+  systemd systemd-sysv dbus dbus-user-session libbpf-dev \
   && rm -rf /var/lib/apt/lists/*
+
+# Disable services that fail in container
+RUN systemctl mask sys-kernel-debug.mount \
+    sys-kernel-tracing.mount \
+    sys-kernel-config.mount \
+    proc-sys-fs-binfmt_misc.automount
+
 COPY systemd.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
