@@ -57,6 +57,28 @@ else
 	echo >&2 'ERROR: systemd is not installed'
 	exit 1
 fi
+
+# Workaround for https://github.com/systemd/systemd/issues/37709:
+# Docker bind-mounts the PTY slave to /dev/console, but newer systemd (258+)
+# requires /dev/console to be a symlink to the PTY device. Replace if needed.
+# This replicates the fix from containers/crun#1796 for Docker-based runtimes.
+if mountpoint -q /dev/console 2>/dev/null; then
+    _mi=$(awk '$5=="/dev/console" {print $3,$4; exit}' /proc/self/mountinfo 2>/dev/null)
+    read -r _devno _root <<< "$_mi"
+    if [ -n "$_devno" ]; then
+        _pts_mnt=$(awk -v devno="$_devno" '$3==devno && $4=="/" {print $5; exit}' /proc/self/mountinfo 2>/dev/null)
+        if [ -n "$_pts_mnt" ]; then
+            _ptynum="${_root#/}"
+            _pty="${_pts_mnt}/${_ptynum}"
+            if [ -c "$_pty" ]; then
+                umount /dev/console 2>/dev/null && ln -sf "$_pty" /dev/console 2>/dev/null || true
+            fi
+        fi
+    fi
+    unset _mi _devno _root _pts_mnt _ptynum _pty
+fi
+
 systemd_args="${ARGS} --show-status=false --unit=docker-entrypoint.target"
 echo "$0: starting $systemd $systemd_args"
+set -ex
 exec $systemd $systemd_args

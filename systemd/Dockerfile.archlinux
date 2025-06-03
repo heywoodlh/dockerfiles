@@ -1,6 +1,31 @@
+FROM docker.io/heywoodlh/archlinux:latest AS repo-setup
+
+# Use wget because curl is complaining about some ssh missing library
+RUN pacman -Sy --noconfirm wget gnupg \
+  && wget https://download.opensuse.org/repositories/system:systemd/Arch/x86_64/system_systemd_Arch.key -O /systemd.key \
+  && gpg --quiet --with-colons --import-options show-only --import --fingerprint <<< "$(cat /systemd.key)" | awk -F: '$1 == "fpr" { print $10 }' > /systemd.key.fpr
+
 FROM docker.io/heywoodlh/archlinux:latest
-RUN pacman -Sy --noconfirm systemd systemd-sysvcompat \
-    && pacman -Scc --noconfirm \
-    && rm /var/lib/pacman/sync/*
+
+COPY --from=repo-setup /systemd.key /systemd.key
+COPY --from=repo-setup /systemd.key.fpr /systemd.key.fpr
+
+RUN pacman-key --init \
+  && pacman-key --add /systemd.key \
+  && pacman-key --lsign-key "$(cat /systemd.key.fpr)" \
+  && rm /systemd.key /systemd.key.fpr \
+  && printf '\n[system_systemd_Arch]\nServer = https://download.opensuse.org/repositories/system:/systemd/Arch/$arch' >> /etc/pacman.conf
+
+# openssl required due to this error: `/usr/lib/libcrypto.so.3: version `OPENSSL_3.4.0' not found`
+RUN pacman -Sy --noconfirm openssl system_systemd_Arch/systemd system_systemd_Arch/systemd-sysvcompat \
+  && pacman -Scc --noconfirm \
+  && rm /var/lib/pacman/sync/*
+
+# Disable services that fail in container
+RUN systemctl mask sys-kernel-debug.mount \
+    sys-kernel-tracing.mount \
+    sys-kernel-config.mount \
+    proc-sys-fs-binfmt_misc.automount
+
 COPY systemd.sh /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]

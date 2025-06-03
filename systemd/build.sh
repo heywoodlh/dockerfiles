@@ -9,7 +9,7 @@ dir=$(dirname -- "$( readlink -f -- "$0"; )";)
 
 docker buildx ls | grep -q multiarch || docker buildx create --name multiarch --driver docker-container --use
 
-set -x
+set -ex
 
 for os in "${operating_systems[@]}"
 do
@@ -23,7 +23,7 @@ do
   # Ubuntu LTS releases
   if [[ ${os} == "ubuntu" ]]
   then
-    ubuntu_versions=("20.04" "22.04" "24.04")
+    ubuntu_versions=("20.04" "22.04" "24.04" "26.04")
     for version in "${ubuntu_versions[@]}"
     do
       docker build --build-arg="UBUNTU_VERSION=${version}" -t "heywoodlh/systemd:ubuntu-${version}-local" -f "${dir}/Dockerfile.ubuntu" .
