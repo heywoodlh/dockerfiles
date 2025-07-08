@@ -2,7 +2,7 @@ FROM docker.io/ubuntu AS base
 
 # https://github.com/DeterminateSystems/nix-installer/issues/1305#issuecomment-2494150324
 RUN apt update \
-    && apt install -y curl \
+    && apt install -y curl git \
     && curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
       --extra-conf "sandbox = false" \
       --init none \
@@ -32,7 +32,7 @@ COPY --from=static-fetcher /nix /usr/bin/nix
 ENV NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
 # Add dependencies and create build users
-RUN apk add --no-cache curl bash shadow \
+RUN apk add --no-cache curl bash shadow git \
     && mkdir -p /etc/nix \
     && mkdir -p /nix \
     && groupadd nixbld \
@@ -61,7 +61,7 @@ COPY --from=lix-builder /nix /usr/bin/nix
 ENV NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
 # Add dependencies and create build users
-RUN apk add --no-cache curl bash shadow \
+RUN apk add --no-cache curl bash shadow git \
     && mkdir -p /etc/nix \
     && mkdir -p /nix \
     && groupadd nixbld \
