@@ -42,9 +42,9 @@ EnvironmentFile=/etc/docker-entrypoint-env
 WantedBy=multi-user.target
 EOF
 
-systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service
-systemctl unmask systemd-logind
-systemctl enable docker-entrypoint.service
+systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service >/dev/null 2>&1
+systemctl unmask systemd-logind >/dev/null 2>&1
+systemctl enable docker-entrypoint.service >/dev/null 2>&1
 
 systemd=
 if [ -x /lib/systemd/systemd ]; then
@@ -57,6 +57,6 @@ else
 	echo >&2 'ERROR: systemd is not installed'
 	exit 1
 fi
-systemd_args="--show-status=false --unit=docker-entrypoint.target"
+systemd_args="${ARGS} --show-status=false --unit=docker-entrypoint.target"
 echo "$0: starting $systemd $systemd_args"
 exec $systemd $systemd_args
