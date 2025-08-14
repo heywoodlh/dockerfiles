@@ -1,4 +1,6 @@
-FROM ubuntu:latest
+ARG UBUNTU_VERSION=latest
+
+FROM docker.io/ubuntu:${UBUNTU_VERSION}
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   systemd systemd-sysv dbus dbus-user-session \

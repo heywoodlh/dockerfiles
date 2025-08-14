@@ -1,4 +1,6 @@
-FROM debian:latest
+ARG DEBIAN_VERSION=latest
+
+FROM docker.io/debian:${DEBIAN_VERSION}
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   systemd systemd-sysv dbus dbus-user-session \
