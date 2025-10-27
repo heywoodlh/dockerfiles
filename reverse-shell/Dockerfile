@@ -25,4 +25,10 @@ FROM base AS server
 
 ENV LISTEN_PORT=
 
+RUN apk add --no-cache shadow \
+    && addgroup --gid 1000 shell \
+    && useradd --shell /bin/ash --uid 1000 --gid 1000 --create-home --home-dir /home/shell shell
+
+USER shell
+
 ENTRYPOINT ["/server.sh"]
