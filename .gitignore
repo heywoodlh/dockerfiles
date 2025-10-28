@@ -1,2 +1,5 @@
 metasploitable3/*.deb
 lnav/upstream/**
+reverse-shell/ssl/**
+flan-scan/flan-ips.txt
+flan-scan/xml_files/**
