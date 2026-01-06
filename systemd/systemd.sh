@@ -42,7 +42,7 @@ EnvironmentFile=/etc/docker-entrypoint-env
 WantedBy=multi-user.target
 EOF
 
-systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service >/dev/null 2>&1
+systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service proc-sys-fs-binfmt_misc.automount sys-kernel-config.mount sys-kernel-debug.mount sys-kernel-tracing.mount >/dev/null 2>&1
 systemctl unmask systemd-logind >/dev/null 2>&1
 systemctl enable docker-entrypoint.service >/dev/null 2>&1
 
