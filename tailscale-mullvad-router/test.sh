@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
-onepassword_item="ohelo3flfw26d3ddenrssvdxqq"
-WIREGUARD_ENDPOINT=$(op-wrapper read "op://Automation/$onepassword_item/WIREGUARD_ENDPOINT")
-WIREGUARD_ENDPOINT_PUBKEY=$(op-wrapper read "op://Automation/$onepassword_item/WIREGUARD_ENDPOINT_PUBKEY")
-WIREGUARD_PRIVKEY=$(op-wrapper read "op://Automation/$onepassword_item/WIREGUARD_PRIVKEY")
-WIREGUARD_ADDRESS=$(op-wrapper read "op://Automation/$onepassword_item/WIREGUARD_ADDRESS")
-TS_AUTHKEY=$(op-wrapper read "op://Automation/$onepassword_item/TS_AUTHKEY")
+onepassword_item="op://Kubernetes/kcntifehovxbdnp5exk4gwsvta"
+WIREGUARD_ENDPOINT=$(op-wrapper read "${onepassword_item}/WIREGUARD_ENDPOINT")
+WIREGUARD_ENDPOINT_PUBKEY=$(op-wrapper read "$onepassword_item/WIREGUARD_ENDPOINT_PUBKEY")
+WIREGUARD_PRIVKEY=$(op-wrapper read "$onepassword_item/WIREGUARD_PRIVKEY")
+WIREGUARD_ADDRESS=$(op-wrapper read "$onepassword_item/WIREGUARD_ADDRESS")
+TS_AUTHKEY=$(op-wrapper read "$onepassword_item/TS_AUTHKEY")
 
 docker volume create tailscale-test &>/dev/null || true # ignore error if exists
 docker build -t heywoodlh/tailscale-mullvad-router-testing .
