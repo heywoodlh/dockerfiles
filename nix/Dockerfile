@@ -1,15 +1,32 @@
 FROM docker.io/ubuntu AS base
 
-# https://github.com/DeterminateSystems/nix-installer/issues/1305#issuecomment-2494150324
+# Dependencies for installation
 RUN apt update \
-    && apt install -y curl git \
-    && curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
+    && apt install -y curl git sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Use unprivileged "nix" user (temporarily privileged for install)
+RUN rm -rf /home/ubuntu && userdel ubuntu \
+    && groupadd --gid 1000 nix \
+    && adduser --uid 1000 --gecos "" --disabled-password --home /git --shell /bin/bash --ingroup nix nix \
+    && mkdir -p /etc/sudoers.d \
+    && echo "nix ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nix
+
+USER nix
+
+# Run install as non-root
+RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
       --extra-conf "sandbox = false" \
       --init none \
       --no-confirm \
       --extra-conf='filter-syscalls = false' \
-    && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh \
-    && rm -rf /var/lib/apt/lists/*
+    && sudo chown -R 1000:1000 /nix \
+    && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+
+# Remove sudo privileges
+USER root
+RUN rm /etc/sudoers.d/nix
+USER nix
 
 ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
