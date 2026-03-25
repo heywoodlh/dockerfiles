@@ -8,7 +8,7 @@ RUN apt update \
 # Use unprivileged "nix" user (temporarily privileged for install)
 RUN rm -rf /home/ubuntu && userdel ubuntu \
     && groupadd --gid 1000 nix \
-    && adduser --uid 1000 --gecos "" --disabled-password --home /git --shell /bin/bash --ingroup nix nix \
+    && adduser --uid 1000 --gecos "" --disabled-password --home /home/nix --shell /bin/bash --ingroup nix nix \
     && mkdir -p /etc/sudoers.d \
     && echo "nix ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nix
 
