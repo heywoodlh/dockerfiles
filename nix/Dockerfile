@@ -1,3 +1,4 @@
+# Base target is final image
 FROM docker.io/ubuntu AS base
 
 # Dependencies for installation
@@ -10,7 +11,9 @@ RUN rm -rf /home/ubuntu && userdel ubuntu \
     && groupadd --gid 1000 nix \
     && adduser --uid 1000 --gecos "" --disabled-password --home /home/nix --shell /bin/bash --ingroup nix nix \
     && mkdir -p /etc/sudoers.d \
-    && echo "nix ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nix
+    && echo "nix ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nix \
+    && mkdir -p /opt/nix \
+    && chown -R 1000:1000 /opt/nix
 
 USER nix
 
@@ -23,12 +26,19 @@ RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/
     && sudo chown -R 1000:1000 /nix \
     && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
-# Remove sudo privileges
+# Make backup of nix store for entrypoint
+RUN cp -r /nix/* /opt/nix
+
+# Remove sudo privileges, but allow initial chown
 USER root
-RUN rm /etc/sudoers.d/nix
+RUN rm /etc/sudoers.d/nix \
+    && echo "nix ALL=NOPASSWD: /usr/bin/chown, /usr/bin/rm, /usr/bin/cp" > /etc/sudoers.d/nix
+COPY entrypoint.sh /entrypoint.sh
 USER nix
 
 ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
+
+ENTRYPOINT [ "/entrypoint.sh" ]
 
 # Target for building the static nix binaries
 FROM docker.io/curlimages/curl AS static-fetcher
@@ -88,3 +98,6 @@ RUN apk add --no-cache curl bash shadow git \
 
 FROM lix AS lix-test
 RUN nix run nixpkgs#hello
+
+# If no target provided, just use base
+FROM base
