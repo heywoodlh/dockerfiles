@@ -3,9 +3,13 @@ FROM docker.io/heywoodlh/nix:latest AS base
 USER root
 # Rename /entrypoint.sh from base image to /nix.sh, install dependencies
 RUN mv /entrypoint.sh /nix.sh \
-    && apt update && apt install -y ripgrep npm \
+    && apt update && apt install -y ripgrep npm podman \
     && npm install -g claude-code-webui \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && echo nix:10000:5000 > /etc/subuid \
+    && echo nix:10000:5000 > /etc/subgid \
+    && mkdir -p /usr/local/bin \
+    && ln -s /usr/bin/podman /usr/local/bin/docker
 
 USER nix
 

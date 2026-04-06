@@ -2,6 +2,7 @@ A [Claude Code WebUI](https://github.com/sugyan/claude-code-webui) image with th
 - Determinate Nix installed
 - Claude Code installed
 - Running as unprivileged `nix` user
+- Podman installed and configured for rootless use for `nix` user
 
 Dockerfile and build resources are here: https://github.com/heywoodlh/dockerfiles/tree/master/claude-code-webui
 
