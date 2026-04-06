@@ -3,3 +3,5 @@ lnav/upstream/**
 reverse-shell/ssl/**
 flan-scan/flan-ips.txt
 flan-scan/xml_files/**
+claude-code-webui/home/**
+claude-code-webui/nix/**
