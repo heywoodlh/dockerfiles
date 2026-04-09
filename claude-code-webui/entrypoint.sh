@@ -39,4 +39,4 @@ fi
 /nix.sh true
 
 # Start nginx and claude-code-webui via supervisord; container exits if either fails
-exec /usr/bin/supervisord -c /opt/supervisord.conf
+exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
