@@ -22,7 +22,21 @@ services:
     volumes:
       - ./nix:/nix
       - ./home:/home/nix
+    #environment:
+    #  - HTTP_AUTH_USERNAME=admin
+    #  - HTTP_AUTH_PASSWORD=
 ```
+
+## Basic Auth
+
+Optional HTTP basic auth can be enabled by setting both environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `HTTP_AUTH_USERNAME` | `admin` | Username for basic auth |
+| `HTTP_AUTH_PASSWORD` | _(empty)_ | Password for basic auth — auth is **disabled** if this is empty |
+
+When `HTTP_AUTH_PASSWORD` is set to a non-empty value, nginx will require credentials before proxying to the WebUI.
 
 ## Claude Code configuration
 
