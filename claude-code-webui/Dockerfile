@@ -12,7 +12,9 @@ RUN mv /entrypoint.sh /nix.sh \
     && ln -s /usr/bin/podman /usr/local/bin/docker \
     # Allow nix user to run nginx (needs write access to log/run dirs)
     && mkdir -p /opt/nginx /var/log/nginx /var/lib/nginx/body /run/nginx /opt/claude \
-    && chown -R nix:nix /opt/nginx /var/log/nginx /var/lib/nginx /run/nginx /opt/claude
+       /etc/supervisor/conf.d \
+    && chown -R nix:nix /opt/nginx /var/log/nginx /var/lib/nginx /run/nginx /opt/claude \
+       /etc/supervisor
 
 USER nix
 
@@ -25,10 +27,11 @@ ENV HOST="0.0.0.0"
 
 COPY entrypoint.sh /entrypoint.sh
 COPY nginx.conf /opt/nginx/nginx.conf
-COPY supervisord.conf /opt/supervisord.conf
+COPY supervisord.conf /etc/supervisor/supervisord.conf
 EXPOSE 8080
 VOLUME /home/nix
 VOLUME /nix
+VOLUME /etc/supervisor/conf.d
 ENTRYPOINT [ "/entrypoint.sh" ]
 
 # Unused stage just to test
