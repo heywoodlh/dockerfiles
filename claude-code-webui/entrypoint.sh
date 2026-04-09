@@ -35,11 +35,8 @@ else
   > "$HOME/.nginx/auth.conf"
 fi
 
-# Start nginx in the background
-nginx -c /opt/nginx/nginx.conf -g "daemon off;" &
-
 # Run /nix.sh from docker.io/heywoodlh/nix
 /nix.sh true
 
-# Start claude-code-webui on the internal port (localhost only)
-/usr/local/bin/claude-code-webui --host 127.0.0.1 --port 3000 "$@"
+# Start nginx and claude-code-webui via supervisord; container exits if either fails
+exec /usr/bin/supervisord -c /opt/supervisord.conf

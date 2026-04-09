@@ -3,7 +3,7 @@ FROM docker.io/heywoodlh/nix:latest AS base
 USER root
 # Rename /entrypoint.sh from base image to /nix.sh, install dependencies
 RUN mv /entrypoint.sh /nix.sh \
-    && apt update && apt install -y ripgrep npm podman nginx apache2-utils \
+    && apt update && apt install -y ripgrep npm podman nginx apache2-utils supervisor \
     && npm install -g claude-code-webui \
     && rm -rf /var/lib/apt/lists/* \
     && echo nix:10000:5000 > /etc/subuid \
@@ -25,6 +25,7 @@ ENV HOST="0.0.0.0"
 
 COPY entrypoint.sh /entrypoint.sh
 COPY nginx.conf /opt/nginx/nginx.conf
+COPY supervisord.conf /opt/supervisord.conf
 EXPOSE 8080
 VOLUME /home/nix
 VOLUME /nix
