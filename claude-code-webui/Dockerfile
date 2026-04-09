@@ -33,7 +33,7 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 
 # Unused stage just to test
 FROM base AS test
-RUN /entrypoint.sh --version
+RUN claude-code-webui --version
 
 # Default target
 FROM base
