@@ -7,3 +7,6 @@ services:
     volumes:
       - ./nix:/nix
       - ./home:/home/nix
+    environment:
+      - HTTP_AUTH_USERNAME=admin
+      - HTTP_AUTH_PASSWORD=admin
