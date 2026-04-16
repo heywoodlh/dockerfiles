@@ -18,7 +18,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY --from=build /opt/metasploit-framework/ /opt/metasploit-framework/
 RUN ln -s /opt/metasploit-framework/bin/* /usr/bin/
 
-RUN apt-get update && apt-get install -y pwgen nmap iproute2 telnet netcat-openbsd net-tools iputils-ping bind9-dnsutils \
+RUN apt-get update && apt-get install -y pwgen \
+    nmap \
+	iproute2 \
+	telnet \
+	netcat-openbsd \
+	net-tools \
+	iputils-ping \
+	bind9-dnsutils \
 	&& rm -rf /var/lib/apt/lists/*
 
 FROM base AS test 
