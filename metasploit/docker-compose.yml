@@ -1,12 +1,17 @@
 services:
   # Run with: docker compose run --rm metasploit
   metasploit:
-    image: "docker.io/heywoodlh/metasploit:latest"
+    build: .
     command: "msfconsole --quiet --execute-command 'db_connect postgres:msf@db:5432/msf'"
     tty: true
     stdin_open: true
     volumes:
-      - msf_data:/root/.msf4
+      - msf_data:/home/msf/.msf4
+      - msf_nix:/nix
+    ports:
+      - 1337:1337 # C&C port
+    environment:
+      SUDO: "false"
     links:
       - db
   db:
@@ -20,3 +25,4 @@ services:
 volumes:
   msf_database:
   msf_data:
+  msf_nix:

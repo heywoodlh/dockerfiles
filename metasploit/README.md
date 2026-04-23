@@ -1,28 +1,57 @@
-This is an unofficial, multiarch build of the Metasploit Framework using [the Omnibus installer](https://github.com/rapid7/metasploit-omnibus).
+This is a community, multiarch build of the Metasploit Framework using [the Nightly installer](https://docs.metasploit.com/docs/using-metasploit/getting-started/nightly-installers.html).
+
+Features:
+- Unprivileged `msf` user
+- Built-from-source Metasploit
+- Nix package manager installed for additional post-installation packages
+
+### Resources
 
 The Dockerfile for this image is here: https://github.com/heywoodlh/dockerfiles/blob/master/metasploit/Dockerfile
 
-The Github Action to build this image is here: https://github.com/heywoodlh/actions/blob/master/.github/workflows/metasploit-buildx.yml
+The GitHub Action to build this image is here: https://github.com/heywoodlh/actions/blob/master/.github/workflows/metasploit-buildx.yml
 
-## Usage: 
+Includes the [Determinate Nix package manager](https://determinate.systems/nix/) for any optional dependencies that might be desired after deployment.
 
-Here are some example aliases you could use with a POSIX compliant shell (BASH, ZSH, etc.):
-
-```
-alias msfconsole='mkdir -p ~/.local/metasploit && docker run -it --rm --net host -v ~/.local/metasploit/:/root/.msf4 -w /root/session -v $(pwd):/root/session heywoodlh/metasploit msfconsole $@'
-alias msfvenom='mkdir -p ~/.local/metasploit && docker run -it --rm -v ~/.local/metasploit/:/root/.msf4 -w /root/session -v $(pwd):/root/session heywoodlh/metasploit msfvenom $@'
-```
-
-### Docker Compose:
-
-A very simple `docker-compose.yml` file is available here: <https://github.com/heywoodlh/dockerfiles/blob/master/metasploit/docker-compose.yml>
-
-Attach to the Metasploit container defined in the `docker-compose.yml` file with this command:
+### Docker Compose
 
 ```
-docker compose run --rm metasploit; docker compose down
+services:
+  # Run with: docker compose run --rm metasploit
+  metasploit:
+    image: "docker.io/heywoodlh/metasploit:latest"
+    command: "msfconsole --quiet --execute-command 'db_connect postgres:msf@db:5432/msf'"
+    tty: true
+    stdin_open: true
+    volumes:
+      - msf_data:/home/msf/.msf4
+      - msf_nix:/nix
+    ports:
+      - 1337:1337 # C&C port
+    links:
+      - db
+    #environment:
+    #  SUDO: "true" # uncomment for `msf` user to be able to run `sudo` commands
+  db:
+    image: "docker.io/postgres:14"
+    volumes:
+      - msf_database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: msf
+      POSTGRES_PASSWORD: msf
+
+volumes:
+  msf_database:
+  msf_data:
+  msf_nix:
 ```
 
-## Issues:
+Then
+
+```
+docker compose run --rm metasploit
+```
+
+## Issues
 
 If issues are encountered with this image [feel free to open an issue](https://github.com/heywoodlh/dockerfiles/issues/new).
