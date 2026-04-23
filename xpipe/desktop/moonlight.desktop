@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Moonlight
+GenericName=moonlight
+Comment=Moonlight Streaming Client
+Exec=/usr/local/bin/moonlight
+Terminal=false
+Type=Application
+Keywords=command;
+Icon=/desktop/moonlight.png
+Categories=Utility;

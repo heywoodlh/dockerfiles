@@ -8,6 +8,7 @@ services:
     environment:
       - SERVER_ADDRESS="server"
       - SERVER_PORT=1337
+      - ENABLE_SSL=true
     networks:
       - net-1
     depends_on:
@@ -22,6 +23,9 @@ services:
       - net-1
     environment:
       - LISTEN_PORT=1337
+      - ENABLE_SSL=true
+    volumes:
+      - ./ssl:/ssl/
 
 networks:
   net-1:

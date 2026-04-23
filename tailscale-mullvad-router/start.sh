@@ -12,6 +12,7 @@ export error="false"
 [[ "${error}" == "true" ]] && echo "Error encountered. Exiting." && exit 3
 
 # Configure Mullvad Wireguard
+mkdir -p /etc/wireguard
 cat >/etc/wireguard/mullvad.conf <<EOL
 [Interface]
 PrivateKey = ${WIREGUARD_PRIVKEY}
@@ -23,9 +24,15 @@ AllowedIPs = 10.64.0.1
 Endpoint = ${WIREGUARD_ENDPOINT}
 EOL
 
-set -ex
 # Bring Mullvad tunnel online
-wg-quick up mullvad
+if wg-quick up mullvad
+then
+  echo "Brought up Mullvad tunnel"
+else
+  echo "Failed to bring up Mullvad tunnel. Exiting."
+  exit 3
+fi
 
+set -ex
 # Bring Tailscale up
 /usr/local/bin/containerboot

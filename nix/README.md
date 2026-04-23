@@ -1,4 +1,6 @@
-Determinate Nix image with Flakes enabled by default.
+Nix image with Flakes enabled by default.
+
+> Determinate used to be the default flavor of Nix in this image, please use the `determinate` flag if you still want Determinate
 
 Dockerfile and build resources are here: https://github.com/heywoodlh/dockerfiles/tree/master/nix
 
@@ -10,28 +12,28 @@ GitHub Action to build this on a recurring basis: https://github.com/heywoodlh/a
 docker run -it --rm docker.io/heywoodlh/nix:latest nix run nixpkgs#hello
 ```
 
-### Statically linked Lix
+### Determinate Nix
 
-The nixStatic package is a bit neglected, see [Build failure: nixStatic (bash: Argument list too long)](https://github.com/NixOS/nixpkgs/issues/357949). This image also provides a statically linked [Lix](https://lix.systems) target that should serve as a drop-in replacement for Nix.
+There is a Determinate Nix installation on an Ubuntu LTS base available with the `determinate` tag:
 
-Use these tags for an image with statically linked Lix:
-- `docker.io/heywoodlh/nix:lix`
-- `docker.io/heywoodlh/nix:lix-${version}`
+```
+docker run -it --rm docker.io/heywoodlh/nix:determinate nix run nixpkgs#hello
+```
 
 ### Statically linked Nix
 
-There is also a static Nix image with the `static` tag:
+There is a static Nix image with the `static` tag:
 
 ```
 docker run -it --rm docker.io/heywoodlh/nix:static nix run nixpkgs#hello
 ```
 
-The `static` image can be used as a base to redistribute the static Nix binary for other Linux systems, as well:
+The `static` image can be used as a base to redistribute the static Nix binary for other Linux systems, as well. For example, in a `Dockerfile`:
 
 ```
-mkdir -p /tmp/nix-bin
-docker run -it --rm -v /tmp/nix-bin:/tmp/nix-bin docker.io/heywoodlh/nix:static cp /usr/bin/nix /tmp/nix-bin/nix
-/tmp/nix-bin/nix --version
+FROM docker.io/alpine
+
+COPY --from=docker.io/heywoodlh/nix:static /usr/bin/nix /usr/bin/nix
 ```
 
 <details>

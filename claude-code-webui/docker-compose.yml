@@ -1,0 +1,12 @@
+services:
+  claude-code-webui:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      - ./nix:/nix
+      - ./home:/home/nix
+    environment:
+      - HTTP_AUTH_USERNAME=admin
+      - HTTP_AUTH_PASSWORD=admin

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=GNOME Keyring
+GenericName=gnome-keyring-daemon
+Comment=GNOME Keyring Daemon
+Exec=/gnome-keyring.sh
+Terminal=false
+Type=Application
+Keywords=command;
+Icon=/desktop/icon.png
+Categories=Utility;

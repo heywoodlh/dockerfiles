@@ -1,0 +1,16 @@
+ts.net:53 {
+  forward . 100.100.100.100
+}
+
+.:53 {
+    errors
+    health {
+        lameduck 5s
+    }
+    ready
+    forward . /etc/resolv.conf
+    cache 30
+    loop
+    reload
+    loadbalance
+}

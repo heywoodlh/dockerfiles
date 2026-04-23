@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY --from=repo-setup /etc/apt/sources.list.d/system:systemd.list /etc/apt/sources.list.d/system:systemd.list
 COPY --from=repo-setup /etc/apt/trusted.gpg.d/system_systemd.gpg /etc/apt/trusted.gpg.d/system_systemd.gpg
 
-# Install libbpf-dev to supress `Neither libbpf.so.1 nor libbpf.so.0 are installed, cgroup BPF features disabled: libbpf.so.0: cannot open shared object file: No such file or directory`
+# Install libbpf-dev to suppress `Neither libbpf.so.1 nor libbpf.so.0 are installed, cgroup BPF features disabled`
 RUN apt update \
   && apt install -y systemd \
   systemd-sysv dbus dbus-user-session libbpf-dev \
