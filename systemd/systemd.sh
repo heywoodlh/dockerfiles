@@ -18,7 +18,14 @@ env >/etc/docker-entrypoint-env
 cat >/etc/systemd/system/docker-entrypoint.target <<EOF
 [Unit]
 Description=the target for docker-entrypoint.service
-Requires=docker-entrypoint.service systemd-logind.service systemd-user-sessions.service
+Requires=docker-entrypoint.service
+# Use Wants= (weak dependency) for logind and user-sessions so that newer
+# systemd versions (257.999+) don't block docker-entrypoint.target forever.
+# In recent upstream systemd, systemd-user-sessions.service gained new
+# dependencies that hang in containers, causing the hard Requires= to stall
+# the target indefinitely (see https://github.com/systemd/systemd/issues/37709).
+Wants=systemd-logind.service systemd-user-sessions.service
+After=systemd-logind.service systemd-user-sessions.service
 EOF
 
 quoted_args="$(printf " %q" "${@}")"
@@ -42,8 +49,8 @@ EnvironmentFile=/etc/docker-entrypoint-env
 WantedBy=multi-user.target
 EOF
 
-systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service
-systemctl unmask systemd-logind
+systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service || true
+systemctl unmask systemd-logind || true
 systemctl enable docker-entrypoint.service
 
 systemd=
