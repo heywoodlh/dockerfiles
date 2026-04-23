@@ -1,4 +1,4 @@
-FROM docker.io/heywoodlh/nix:latest AS base
+FROM docker.io/heywoodlh/nix:determinate AS base
 
 USER root
 # Rename /entrypoint.sh from base image to /nix.sh, install dependencies

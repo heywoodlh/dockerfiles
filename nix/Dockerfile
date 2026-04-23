@@ -1,40 +1,41 @@
-# Base target is final image
-FROM docker.io/ubuntu AS base
+# Alpine base image
+FROM docker.io/alpine AS alpine-base
 
-# Dependencies for installation
+## Dependencies
+RUN apk add --no-cache curl bash shadow git sudo xz coreutils \
+    && mkdir -p /etc/nix \
+    && mkdir -p /nix
+
+## Copy some shared files
+COPY install.sh /install.sh
+COPY nix.sh /nix.sh
+COPY entrypoint.sh /entrypoint.sh
+
+ENV PATH="${PATH}:/home/nix/.nix-profile/bin:/nix/var/nix/profiles/default/bin"
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+
+# "Normal" Nix installation
+FROM alpine-base AS nix
+
+RUN /install.sh "default" && rm /install.sh
+USER nix
+
+# Determinate Nix
+FROM docker.io/ubuntu AS determinate
+
+## Dependencies for installation
 RUN apt update \
     && apt install -y curl git sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Use unprivileged "nix" user (temporarily privileged for install)
-RUN rm -rf /home/ubuntu && userdel ubuntu \
-    && groupadd --gid 1000 nix \
-    && adduser --uid 1000 --gecos "" --disabled-password --home /home/nix --shell /bin/bash --ingroup nix nix \
-    && mkdir -p /etc/sudoers.d \
-    && echo "nix ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nix \
-    && mkdir -p /opt/nix \
-    && chown -R 1000:1000 /opt/nix
-
+## Install Nix
+COPY install.sh /install.sh
+COPY nix.sh /nix.sh
+RUN /install.sh "determinate" && rm /install.sh
 USER nix
 
-# Run install as non-root
-RUN curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
-      --extra-conf "sandbox = false" \
-      --init none \
-      --no-confirm \
-      --extra-conf='filter-syscalls = false' \
-    && sudo chown -R 1000:1000 /nix \
-    && . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-
-# Make backup of nix store for entrypoint
-RUN cp -r /nix/* /opt/nix
-
-# Remove sudo privileges, but allow initial chown
-USER root
-RUN rm /etc/sudoers.d/nix \
-    && echo "nix ALL=NOPASSWD: /usr/bin/chown, /usr/bin/rm, /usr/bin/cp" > /etc/sudoers.d/nix
 COPY entrypoint.sh /entrypoint.sh
-USER nix
 
 ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
@@ -53,51 +54,25 @@ RUN curl -L https://hydra.nixos.org/job/nix/maintenance-2.25/buildStatic.nix.$(a
     && /nix --version
 
 # static target
-FROM docker.io/alpine:latest AS static
+FROM alpine-base AS static
 
 COPY --from=static-fetcher /nix /usr/bin/nix
-ENV NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
-# Add dependencies and create build users
-RUN apk add --no-cache curl bash shadow git \
-    && mkdir -p /etc/nix \
-    && mkdir -p /nix \
-    && groupadd nixbld \
-    && for n in $(seq 1 10); do useradd -c "Nix build user $n" \
-    -d /var/empty -g nixbld -G nixbld -M -N -r -s "$(which nologin)" \
-    nixbld$n; done
+RUN /install.sh "static" && rm /install.sh
+
+COPY nix.conf /etc/nix/nix.conf
+COPY static.sh /entrypoint.sh
+USER nix
 
 # Testing targets
-FROM base AS test
+FROM nix AS test
+RUN nix run nixpkgs#hello
+
+FROM determinate AS determinate-test
 RUN nix run nixpkgs#hello
 
 FROM static AS static-test
 RUN nix run nixpkgs#hello
 
-# lix-builder target
-FROM ghcr.io/lix-project/lix AS lix-builder
-
-RUN nix --extra-experimental-features "flakes nix-command" build "github:nixos/nixpkgs/nixpkgs-unstable#lixStatic" -o /tmp/lix-static \
-    && cp /tmp/lix-static/bin/nix /nix \
-    && /nix --version
-
-# lix target
-FROM docker.io/alpine:latest AS lix
-
-COPY --from=lix-builder /nix /usr/bin/nix
-ENV NIX_CONFIG="extra-experimental-features = nix-command flakes"
-
-# Add dependencies and create build users
-RUN apk add --no-cache curl bash shadow git \
-    && mkdir -p /etc/nix \
-    && mkdir -p /nix \
-    && groupadd nixbld \
-    && for n in $(seq 1 10); do useradd -c "Nix build user $n" \
-    -d /var/empty -g nixbld -G nixbld -M -N -r -s "$(which nologin)" \
-    nixbld$n; done
-
-FROM lix AS lix-test
-RUN nix run nixpkgs#hello
-
-# If no target provided, just use base
-FROM base
+# If no target provided, just use nix target
+FROM nix
