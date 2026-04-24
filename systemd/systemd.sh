@@ -19,13 +19,6 @@ cat >/etc/systemd/system/docker-entrypoint.target <<EOF
 [Unit]
 Description=the target for docker-entrypoint.service
 Requires=docker-entrypoint.service
-# Use Wants= (weak dependency) for logind and user-sessions so that newer
-# systemd versions (257.999+) don't block docker-entrypoint.target forever.
-# In recent upstream systemd, systemd-user-sessions.service gained new
-# dependencies that hang in containers, causing the hard Requires= to stall
-# the target indefinitely (see https://github.com/systemd/systemd/issues/37709).
-Wants=systemd-logind.service systemd-user-sessions.service
-After=systemd-logind.service systemd-user-sessions.service
 EOF
 
 quoted_args="$(printf " %q" "${@}")"
@@ -39,7 +32,7 @@ Description=docker-entrypoint.service
 ExecStart=/bin/bash -exc "source /etc/docker-entrypoint-cmd"
 # EXIT_STATUS is either an exit code integer or a signal name string, see systemd.exec(5)
 ExecStopPost=/bin/bash -ec "if echo \${EXIT_STATUS} | grep [A-Z] > /dev/null; then echo >&2 \"got signal \${EXIT_STATUS}\"; systemctl exit \$(( 128 + \$( kill -l \${EXIT_STATUS} ) )); else systemctl exit \${EXIT_STATUS}; fi"
-StandardInput=tty-force
+StandardInput=file:/proc/1/fd/0
 StandardOutput=inherit
 StandardError=inherit
 WorkingDirectory=$(pwd)
