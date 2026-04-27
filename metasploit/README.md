@@ -1,4 +1,4 @@
-This is a community, multiarch build of the Metasploit Framework using [the Nightly installer](https://docs.metasploit.com/docs/using-metasploit/getting-started/nightly-installers.html).
+This is a community, multiarch, built-from-source image of the Metasploit Framework.
 
 Features:
 - Unprivileged `msf` user
@@ -11,7 +11,7 @@ The Dockerfile for this image is here: https://github.com/heywoodlh/dockerfiles/
 
 The GitHub Action to build this image is here: https://github.com/heywoodlh/actions/blob/master/.github/workflows/metasploit-buildx.yml
 
-Includes the [Determinate Nix package manager](https://determinate.systems/nix/) for any optional dependencies that might be desired after deployment.
+Includes the [Nix package manager](https://nixos.org/download/) for any optional dependencies that might be desired after deployment.
 
 ### Docker Compose
 
