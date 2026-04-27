@@ -1,4 +1,14 @@
-FROM docker.io/fedora:latest
+FROM docker.io/fedora:rawhide
+
 COPY systemd.sh /docker-entrypoint.sh
-RUN dnf -y install systemd && dnf clean all
+RUN dnf config-manager addrepo --from-repofile=https://download.opensuse.org/repositories/system:systemd/Fedora_Rawhide/system:systemd.repo \
+  && dnf -y install systemd \
+  && dnf clean all
+
+# Disable services that fail in container
+RUN systemctl mask sys-kernel-debug.mount \
+    sys-kernel-tracing.mount \
+    sys-kernel-config.mount \
+    proc-sys-fs-binfmt_misc.automount
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
