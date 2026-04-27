@@ -1,8 +1,8 @@
-services:
-  # Run with: docker compose run --rm metasploit
+services: # Run with: docker compose run --rm metasploit
   metasploit:
     build: .
-    command: "msfconsole --quiet --execute-command 'db_connect postgres:msf@db:5432/msf'"
+    #image: docker.io/heywoodlh/metasploit:latest
+    command: "/entrypoint.sh msfconsole --execute-command 'db_connect postgres:msf@db:5432/msf'"
     tty: true
     stdin_open: true
     volumes:
@@ -14,6 +14,94 @@ services:
       SUDO: "false"
     links:
       - db
+
+  # MSFRPCD EXAMPLE, run with: docker compose run --rm msfrpc
+  msfrpc:
+    #image: docker.io/heywoodlh/metasploit:msfrpc
+    build:
+      context: .
+      target: msfrpc
+    command: "/rpc-client.sh"
+    tty: true
+    stdin_open: true
+    volumes:
+      - msf_data:/home/msf/.msf4
+      - msf_nix:/nix
+    environment:
+      MSF_SSL: "false"
+      MSF_PORT: "55553"
+      MSF_HOST: "msfrpcd"
+      MSF_USERNAME: "demo"
+      MSF_PASSWORD: "demo"
+    links:
+      - db
+      - msfrpcd
+  msfrpcd:
+    #image: docker.io/heywoodlh/metasploit:msfrpcd
+    build:
+      context: .
+      target: msfrpcd
+    volumes:
+      - msf_data:/home/msf/.msf4
+      - msf_nix:/nix
+      # uncomment below if you'd like to provide your own database configuration
+      #- ./database.yml:/home/msf/.msf4/database.yml:ro
+    ##ports:
+    ##  - 55553:55553
+    environment:
+      MSF_PORT: "55553"
+      MSF_SSL: "false"
+      MSF_USERNAME: "demo"
+      MSF_PASSWORD: "demo"
+      DB_ENABLE: "true"
+      DB_ADAPTER: "postgresql"
+      DB_NAME: "msf"
+      DB_USERNAME: "msf"
+      DB_PASSWORD: "msf"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+    links:
+      - db
+  # END MSFRPCD EXAMPLE
+
+  # MSFD EXAMPLE, run with: docker compose run --rm msfd-client
+  msfd-client:
+    #image: docker.io/heywoodlh/metasploit:msfd-client
+    build:
+      context: .
+      target: msfd-client
+    tty: true
+    stdin_open: true
+    environment:
+      MSFD_HOST: "msfd"
+      MSFD_PORT: "55554"
+    links:
+      - db
+      - msfd
+  msfd:
+    #image: docker.io/heywoodlh/metasploit:msfd
+    build:
+      context: .
+      target: msfd
+    volumes:
+      - msf_data:/home/msf/.msf4
+      - msf_nix:/nix
+      #- ./database.yml:/home/msf/.msf4/database.yml:ro
+    environment:
+      MSFD_PORT: "55554"
+      DB_ENABLE: "true"
+      DB_ADAPTER: "postgresql"
+      DB_NAME: "msf"
+      DB_USERNAME: "msf"
+      DB_PASSWORD: "msf"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+    #ports:
+    #  - 55554:55554
+    links:
+      - db
+
+  # END MSFD EXAMPLE
   db:
     image: "docker.io/postgres:14"
     volumes:

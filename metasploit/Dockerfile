@@ -108,13 +108,93 @@ VOLUME /nix
 
 COPY ./entrypoint.sh /entrypoint.sh
 
+# Provide `/rpc-client.sh`
+COPY ./rpc-client.sh /rpc-client.sh
+# Disable remote SSL by default
+ENV MSF_SSL="false"
+
 FROM base AS test
 COPY ./test.sh /test.sh
 CMD ["/test.sh"]
 
+# Client msfrpc container
+FROM base AS msfrpc
+LABEL maintainer=heywoodlh
+VOLUME /home/msf/.msf4
+
+ENV MSF_USERNAME="msf"
+ENV MSF_PASSWORD="msf"
+ENV MSF_ADDRESS=127.0.0.1
+ENV MSF_PORT=55553
+# for some reason, `msfrpc` requires root privs
+ENV SUDO="true"
+
+USER root
+RUN apk --no-cache add netcat-openbsd
+USER msf
+
+ENTRYPOINT [ "/entrypoint.sh", "/rpc-client.sh" ]
+
+FROM base AS server
+LABEL maintainer=heywoodlh
+
+# Force users to be explicit about using DB vars, disabled by default
+# Set `DB_ENABLE` to anything but "false" to enable
+ENV DB_ENABLE="false"
+ENV DB_ADAPTER="postgresql"
+ENV DB_NAME="msf"
+ENV DB_USERNAME="msf"
+ENV DB_PASSWORD="msf"
+ENV DB_PORT="5432"
+ENV DB_HOST="db"
+
+COPY db.sh /db.sh
+
+VOLUME /home/msf/.msf4
+
+# msfrpcd
+FROM server AS msfrpcd
+
+ENV MSF_USERNAME="msf"
+ENV MSF_PASSWORD="msf"
+ENV MSF_ADDRESS=0.0.0.0
+ENV MSF_PORT=55553
+
+COPY rpc.sh /rpc.sh
+
+ENTRYPOINT [ "/rpc.sh" ]
+
+# msfd target
+FROM server AS msfd
+LABEL maintainer=heywoodlh
+VOLUME /home/msf/.msf4
+
+ENV MSFD_PORT="55554"
+# for some reason, `msfd` requires root privs
+ENV SUDO="true"
+
+COPY msfd.sh /msfd.sh
+
+ENTRYPOINT [ "/msfd.sh" ]
+
+# netcat client for connecting to remote msfd
+FROM docker.io/alpine:${alpine_version} AS msfd-client
+LABEL maintainer=heywoodlh
+
+ENV MSFD_HOST="127.0.0.1"
+ENV MSFD_PORT="55554"
+
+RUN apk --no-cache add netcat-openbsd
+COPY msfd-client.sh /msfd-client.sh
+
+ENTRYPOINT [ "/msfd-client.sh" ]
+
+# Default target
+# Note to self: MUST BE THE LAST TARGET IN THE DOCKERFILE FOR `docker-compose.yml`
 FROM base
 LABEL maintainer=heywoodlh
 VOLUME /home/msf/.msf4
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/bin/bash" ]
+

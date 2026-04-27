@@ -4,6 +4,7 @@ Features:
 - Unprivileged `msf` user
 - Built-from-source Metasploit
 - Nix package manager installed for additional post-installation packages
+- `msfrpcd` and `msfd` tag for running Metasploit remotely: [Running Metasploit Remotely](https://docs.rapid7.com/metasploit/running-metasploit-remotely/)
 
 ### Resources
 
@@ -15,41 +16,32 @@ Includes the [Nix package manager](https://nixos.org/download/) for any optional
 
 ### Docker Compose
 
-```
-services:
-  # Run with: docker compose run --rm metasploit
-  metasploit:
-    image: "docker.io/heywoodlh/metasploit:latest"
-    command: "msfconsole --quiet --execute-command 'db_connect postgres:msf@db:5432/msf'"
-    tty: true
-    stdin_open: true
-    volumes:
-      - msf_data:/home/msf/.msf4
-      - msf_nix:/nix
-    ports:
-      - 1337:1337 # C&C port
-    links:
-      - db
-    #environment:
-    #  SUDO: "true" # uncomment for `msf` user to be able to run `sudo` commands
-  db:
-    image: "docker.io/postgres:14"
-    volumes:
-      - msf_database:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: msf
-      POSTGRES_PASSWORD: msf
+The following should serve as a reference for every type of deployment desired: [docker-compose.yml](https://github.com/heywoodlh/dockerfiles/blob/master/metasploit/docker-compose.yml)
 
-volumes:
-  msf_database:
-  msf_data:
-  msf_nix:
-```
+As a quickstart, copy [docker-compose.yml](https://github.com/heywoodlh/dockerfiles/blob/master/metasploit/docker-compose.yml) to your project directory:
 
-Then
+Then, to run Metasploit with a working database, run:
 
 ```
 docker compose run --rm metasploit
+```
+
+If you'd like to try Metasploit client with a separate `msrpcd` instance and database, run:
+
+```
+docker compose run --rm msfrpc
+```
+
+If you'd like to try a Netcat client with `msfd` with a separate `msfd` instance and database, run:
+
+```
+docker compose run --rm msfd-client
+```
+
+Bring down all services when done with:
+
+```
+docker compose down
 ```
 
 ## Issues
