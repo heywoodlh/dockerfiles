@@ -6,9 +6,9 @@ A [Hermes Agent](https://github.com/NousResearch/hermes-agent) image with the fo
 - Podman installed and configured for rootless use for `nix` user
 - Supervisord installed and configured to be extended (i.e. add new service definitions to `/etc/supervisord/conf.d/*.conf`)
 
-Dockerfile and build resources are here: https://github.com/heywoodlh/dockerfiles/tree/master/claude-code-webui
+Dockerfile and build resources are here: https://github.com/heywoodlh/dockerfiles/tree/master/hermes-agent
 
-GitHub Action to build this on a recurring basis: https://github.com/heywoodlh/actions/blob/master/.github/workflows/claude-code-webui.yml
+GitHub Action to build this on a recurring basis: https://github.com/heywoodlh/actions/blob/master/.github/workflows/hermes-agent.yml
 
 ## Deployment
 
