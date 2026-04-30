@@ -1,0 +1,13 @@
+services:
+  hermes-agent:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      - ./nix:/nix
+      - ./home:/home/nix
+      - ./supervisord-custom:/etc/supervisor/conf.d
+    environment:
+      - HTTP_AUTH_USERNAME=admin
+      - HTTP_AUTH_PASSWORD=admin
