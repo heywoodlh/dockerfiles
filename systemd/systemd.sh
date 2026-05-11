@@ -18,7 +18,7 @@ env >/etc/docker-entrypoint-env
 cat >/etc/systemd/system/docker-entrypoint.target <<EOF
 [Unit]
 Description=the target for docker-entrypoint.service
-Requires=docker-entrypoint.service systemd-logind.service systemd-user-sessions.service
+Requires=docker-entrypoint.service
 EOF
 
 quoted_args="$(printf " %q" "${@}")"
@@ -32,7 +32,7 @@ Description=docker-entrypoint.service
 ExecStart=/bin/bash -exc "source /etc/docker-entrypoint-cmd"
 # EXIT_STATUS is either an exit code integer or a signal name string, see systemd.exec(5)
 ExecStopPost=/bin/bash -ec "if echo \${EXIT_STATUS} | grep [A-Z] > /dev/null; then echo >&2 \"got signal \${EXIT_STATUS}\"; systemctl exit \$(( 128 + \$( kill -l \${EXIT_STATUS} ) )); else systemctl exit \${EXIT_STATUS}; fi"
-StandardInput=tty-force
+StandardInput=file:/proc/1/fd/0
 StandardOutput=inherit
 StandardError=inherit
 WorkingDirectory=$(pwd)
@@ -42,9 +42,9 @@ EnvironmentFile=/etc/docker-entrypoint-env
 WantedBy=multi-user.target
 EOF
 
-systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service proc-sys-fs-binfmt_misc.automount sys-kernel-config.mount sys-kernel-debug.mount sys-kernel-tracing.mount >/dev/null 2>&1
-systemctl unmask systemd-logind >/dev/null 2>&1
-systemctl enable docker-entrypoint.service >/dev/null 2>&1
+systemctl mask systemd-firstboot.service systemd-udevd.service systemd-modules-load.service || true
+systemctl unmask systemd-logind || true
+systemctl enable docker-entrypoint.service
 
 systemd=
 if [ -x /lib/systemd/systemd ]; then
@@ -57,6 +57,8 @@ else
 	echo >&2 'ERROR: systemd is not installed'
 	exit 1
 fi
+
 systemd_args="${ARGS} --show-status=false --unit=docker-entrypoint.target"
 echo "$0: starting $systemd $systemd_args"
+set -ex
 exec $systemd $systemd_args
