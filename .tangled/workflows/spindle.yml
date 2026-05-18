@@ -14,6 +14,10 @@ environment:
   TANGLED_REV: "f927a787"
 
 steps:
+  - name: echo docker vars
+    command: |
+      echo DOCKER_HOST: $DOCKER_HOST
+
   - name: enable multiarch docker
     command: |
       docker buildx ls | grep -q multiarch || docker buildx create --name multiarch --driver docker-container --use
