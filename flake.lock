@@ -1887,11 +1887,11 @@
         "vidhanix": "vidhanix"
       },
       "locked": {
-        "lastModified": 1779125544,
-        "narHash": "sha256-+7XCLJ/aUzT1fFL0MXKVrs7rA/oeLuZY1SLqVKC5fWk=",
+        "lastModified": 1779224632,
+        "narHash": "sha256-bLVLAvWn0sVJ/AzrxPO4J3VqxBdxAlyCS+4389mH/v4=",
         "ref": "refs/heads/main",
-        "rev": "c8b30fbbcbd2d94f1af3d6efab635c3530877006",
-        "revCount": 2184,
+        "rev": "24e39588ed2d88bd06f909a1474b8a6cca3adc75",
+        "revCount": 2188,
         "type": "git",
         "url": "https://tangled.org/heywoodlh.io/nixos-configs"
       },
@@ -2650,11 +2650,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779125308,
-        "narHash": "sha256-bYB99Cg12Sx6NG7kJN7UYiOaMt2AXPQnVkS7C07nylU=",
+        "lastModified": 1779224434,
+        "narHash": "sha256-wseNJcJaQkdktHVZAC3UEmaNtNlxBmmDfbQW98iprUM=",
         "ref": "refs/heads/main",
-        "rev": "3bf251e277c93de2a18663011337d91297e861c0",
-        "revCount": 3,
+        "rev": "fe09450138218fbe83399666df453461abd0ea9b",
+        "revCount": 10,
         "type": "git",
         "url": "https://tangled.org/heywoodlh.io/spindle-run"
       },
@@ -2775,18 +2775,17 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1778866020,
-        "narHash": "sha256-AGrSeV9CznKcKcrCjPJnvFFzRb2OkItYVi8cV13l1Rw=",
-        "ref": "spindle-run",
-        "rev": "bea5c8e76458c3e921a681e77f972e5c72191ae5",
-        "revCount": 2439,
+        "lastModified": 1779201325,
+        "narHash": "sha256-bqPvfJ7z3HvBxv78cLczeB8N72D7YlxZgpwhhqAO/Ng=",
+        "ref": "refs/heads/master",
+        "rev": "886425c7c3a7734baa848c2f1072f162179ede41",
+        "revCount": 2485,
         "type": "git",
-        "url": "https://tangled.org/heywoodlh.io/core"
+        "url": "https://tangled.org/tangled.org/core"
       },
       "original": {
-        "ref": "spindle-run",
         "type": "git",
-        "url": "https://tangled.org/heywoodlh.io/core"
+        "url": "https://tangled.org/tangled.org/core"
       }
     },
     "tinted-foot": {

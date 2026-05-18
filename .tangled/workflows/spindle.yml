@@ -10,8 +10,8 @@ dependencies:
     - gnugrep
 
 environment:
-  TANGLED_REPO: "heywoodlh.io/core"
-  TANGLED_REV: "f927a787"
+  TANGLED_REPO: "tangled.io/core"
+  TANGLED_REV: "master"
 
 steps:
   - name: echo docker vars

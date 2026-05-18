@@ -3,6 +3,7 @@ Community image of [Spindle](https://docs.tangled.org/spindles), [tangled.org](h
 Features:
 - Unprivileged user
 - Docker in Docker configuration
+- [spindle-run](https://tangled.org/heywoodlh.io/spindle-run) installed for ease of testing in container
 
 ---
 

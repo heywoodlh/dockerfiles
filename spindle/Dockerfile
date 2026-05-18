@@ -5,18 +5,21 @@ ARG GO_VERSION="1.26"
 
 FROM docker.io/golang:${GO_VERSION}-${DEBIAN_VERSION} AS builder
 
-# Allow overridding repo and rev
-ARG TANGLED_REPO="tangled.org/core"
-ARG TANGLED_REV="master"
-
 RUN apt update && apt install -y git \
-    && git clone https://tangled.org/${TANGLED_REPO} /opt/tangled \
-    && git -C /opt/tangled checkout ${TANGLED_REV} \
+    && git clone https://tangled.org/tangled.org/core /opt/tangled \
     && git -C /opt/tangled rev-parse --short HEAD > /VERSION.txt \
     && cd /opt/tangled \
     && go mod download \
     && go build -o /spindle cmd/spindle/main.go \
     && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+
+FROM docker.io/heywoodlh/nix:determinate AS spindle-run-builder
+
+RUN out=$(nix build "git+https://tangled.org/heywoodlh.io/spindle-run#spindle-run-bin" \
+    --no-link \
+    --option sandbox false \
+    --print-out-paths) \
+    && cp "$out/bin/spindle-run" /home/nix/spindle-run
 
 # Target to simply print the version
 FROM builder AS version
@@ -27,6 +30,9 @@ FROM docker.io/debian:${DEBIAN_VERSION} AS base
 
 # Install spindle
 COPY --from=builder /spindle /usr/bin/spindle
+
+# Install spindle-run
+COPY --from=spindle-run-builder /home/nix/spindle-run /usr/local/bin/spindle-run
 
 # Install docker-client
 COPY --chmod=777 ./install-docker.sh /install-docker.sh
