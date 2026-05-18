@@ -9,6 +9,10 @@ dependencies:
     - docker-client
     - gnugrep
 
+environment:
+  TANGLED_REPO: "heywoodlh.io/core"
+  TANGLED_REV: "f927a787"
+
 steps:
   - name: login to docker hub
     command: |
@@ -22,8 +26,11 @@ steps:
   - name: build spindle image
     command: |
       # Build `version` target for deriving rev of spindle
-      docker build --build-arg TANGLED_REPO="heywoodlh.io/core" --build-arg TANGLED_REV="spindle-run" -t docker.io/heywoodlh/spindle:version --target=version -f ./spindle/Dockerfile ./spindle
+      docker build --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" -t docker.io/heywoodlh/spindle:version --target=version -f ./spindle/Dockerfile ./spindle
 
       # Actual build/push
-      docker buildx build --platform linux/amd64,linux/arm64 --build-arg TANGLED_REPO="heywoodlh.io/core" --build-arg TANGLED_REV="spindle-run" --push -t docker.io/heywoodlh/spindle:latest -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version) -f ./spindle/Dockerfile ./spindle
+      docker buildx build --platform linux/amd64,linux/arm64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --push -t docker.io/heywoodlh/spindle:latest -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version) -f ./spindle/Dockerfile ./spindle
+
+      # Actual build/push (root target)
+      docker buildx build --platform linux/amd64,linux/arm64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --target=root --push -t docker.io/heywoodlh/spindle:root -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version)-root -f ./spindle/Dockerfile ./spindle
 
