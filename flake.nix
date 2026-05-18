@@ -21,12 +21,14 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           tangled-sync = nixos-configs.packages.${system}.tangled-sync;
+          spindle-run = nixos-configs.packages.${system}.spindle-run;
         in
         {
           default = pkgs.mkShell {
             name = "default";
             buildInputs = with pkgs; [
               dockerfile-language-server
+              spindle-run
             ];
             shellHook = ''
               ${tangled-sync}/bin/tangled-sync.sh

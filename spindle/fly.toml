@@ -1,0 +1,49 @@
+# fly.toml app configuration file generated for spindle-heywoodlh on 2026-05-12T16:38:15-06:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'spindle-heywoodlh'
+primary_region = 'sjc'
+
+[build]
+  build-target = "root"
+
+[build.args]
+  TANGLED_REPO="heywoodlh.io/core"
+  TANGLED_REV="spindle-run"
+
+[env]
+  SPINDLE_SERVER_DEV = 'false'
+  SPINDLE_SERVER_HOSTNAME = 'spindle.heywoodlh.io'
+  SPINDLE_SERVER_OWNER = 'did:plc:ycnss4fntzi3rjuueb7loq3x'
+  SPINDLE_SERVER_MAX_CONCURRENT_WORKFLOWS = '1'
+
+[[mounts]]
+  source = 'data'
+  destination = '/data'
+
+[http_service]
+  internal_port = 6555
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[services]]
+  protocol = 'tcp'
+  internal_port = 6555
+
+  [[services.ports]]
+    port = 6555
+
+  [[services.tcp_checks]]
+    grace_period = "10s"
+    interval = "15s"
+    timeout = "5s"
+
+[[vm]]
+  memory = '2gb'
+  cpus = 1
+  memory_mb = 2048

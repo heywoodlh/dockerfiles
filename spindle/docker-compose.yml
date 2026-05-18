@@ -1,0 +1,15 @@
+services:
+  spindle:
+    build: .
+    volumes:
+      - log:/var/log/spindle
+      - data:/data
+    environment:
+      - SPINDLE_SERVER_HOSTNAME="localhost"
+      - SPINDLE_SERVER_DEV=true # set to false (no quotes) in production
+      - SPINDLE_SERVER_OWNER="did:plc:ycnss4fntzi3rjuueb7loq3x"
+    privileged: true
+
+volumes:
+  log:
+  data:
