@@ -9,6 +9,8 @@ services:
       - SPINDLE_SERVER_DEV=true # set to false (no quotes) in production
       - SPINDLE_SERVER_OWNER="did:plc:ycnss4fntzi3rjuueb7loq3x"
     privileged: true
+    ports:
+      - 6555:6555
 
 volumes:
   log:
