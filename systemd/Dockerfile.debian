@@ -1,17 +1,31 @@
-FROM docker.io/debian:sid AS repo-setup
+ARG DEBIAN_VERSION="sid"
+ARG UPSTREAM="true"
+
+FROM docker.io/debian:${DEBIAN_VERSION} AS repo-setup
+ARG UPSTREAM="true"
 ENV DEBIAN_FRONTEND=noninteractive
 # Grab latest systemd versions from official systemd OBS repo
 RUN apt update \
-  && apt install -y curl gnupg \
-  && echo 'deb http://download.opensuse.org/repositories/system:/systemd/Debian_Testing/ /' | tee /etc/apt/sources.list.d/system:systemd.list \
-  && curl -fsSL https://download.opensuse.org/repositories/system:systemd/Debian_Testing/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/system_systemd.gpg > /dev/null
+  && apt install -y curl gnupg
+RUN if [[ "$UPSTREAM" == "true" ]]; then \
+  echo 'deb http://download.opensuse.org/repositories/system:/systemd/Debian_Testing/ /' | tee /etc/apt/sources.list.d/system:systemd.list \
+  && curl -fsSL https://download.opensuse.org/repositories/system:systemd/Debian_Testing/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/system_systemd.gpg > /dev/null; \
+else \
+  touch /etc/apt/sources.list.d/system:systemd.list \
+  && touch /etc/apt/trusted.gpg.d/system_systemd.gpg; \
+fi
 
 # Use unstable Debian for latest systemd dependencies
-FROM docker.io/debian:sid
+FROM docker.io/debian:${DEBIAN_VERSION}
+ARG UPSTREAM="true"
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=repo-setup /etc/apt/sources.list.d/system:systemd.list /etc/apt/sources.list.d/system:systemd.list
 COPY --from=repo-setup /etc/apt/trusted.gpg.d/system_systemd.gpg /etc/apt/trusted.gpg.d/system_systemd.gpg
+
+RUN if [[ "$UPSTREAM" != "true" ]]; then \
+  rm /etc/apt/sources.list.d/system:systemd.list /etc/apt/trusted.gpg.d/system_systemd.gpg; \
+fi
 
 # Install libbpf-dev to supress `Neither libbpf.so.1 nor libbpf.so.0 are installed, cgroup BPF features disabled: libbpf.so.0: cannot open shared object file: No such file or directory`
 RUN apt update \
