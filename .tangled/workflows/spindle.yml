@@ -33,8 +33,8 @@ steps:
       docker build --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" -t docker.io/heywoodlh/spindle:version --target=version -f ./spindle/Dockerfile ./spindle
 
       # actual build/push
-      docker buildx build --platform linux/amd64,linux/arm64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --push -t docker.io/heywoodlh/spindle:latest -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version) -f ./spindle/Dockerfile ./spindle
+      docker buildx build --platform linux/amd64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --push -t docker.io/heywoodlh/spindle:latest -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version) -f ./spindle/Dockerfile ./spindle
 
       # actual build/push (root target)
-      docker buildx build --platform linux/amd64,linux/arm64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --target=root --push -t docker.io/heywoodlh/spindle:root -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version)-root -f ./spindle/Dockerfile ./spindle
+      docker buildx build --platform linux/amd64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --target=root --push -t docker.io/heywoodlh/spindle:root -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version)-root -f ./spindle/Dockerfile ./spindle
 
