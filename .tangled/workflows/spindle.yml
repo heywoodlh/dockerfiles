@@ -32,6 +32,10 @@ steps:
       # build `version` target for deriving rev of spindle
       docker build --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" -t docker.io/heywoodlh/spindle:version --target=version -f ./spindle/Dockerfile ./spindle
 
+      # build `test` target for ensuring executables work as expected
+      docker build --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" -t docker.io/heywoodlh/spindle:test --target=test -f ./spindle/Dockerfile ./spindle
+      docker build --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" -t docker.io/heywoodlh/spindle:test-root --target=test-root -f ./spindle/Dockerfile ./spindle
+
       # actual build/push
       docker buildx build --platform linux/amd64 --build-arg TANGLED_REPO="$TANGLED_REPO" --build-arg TANGLED_REV="$TANGLED_REV" --push -t docker.io/heywoodlh/spindle:latest -t docker.io/heywoodlh/spindle:$(docker run -i --rm docker.io/heywoodlh/spindle:version) -f ./spindle/Dockerfile ./spindle
 

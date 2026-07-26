@@ -21,6 +21,10 @@ RUN out=$(nix build "git+https://tangled.org/heywoodlh.io/spindle-run#spindle-ru
     --print-out-paths) \
     && cp "$out/bin/spindle-run" /home/nix/spindle-run
 
+FROM docker.io/heywoodlh/nix:determinate AS git-bundler
+
+RUN nix bundle -o "/home/nix/git-deb" --bundler github:nixos/bundlers#toDEB "github:nixos/nixpkgs/nixos-unstable#git"
+
 # Target to simply print the version
 FROM builder AS version
 
@@ -47,6 +51,10 @@ RUN /install-docker.sh \
     && useradd --shell /bin/bash --uid 1000 --gid 1000 --create-home --home-dir /data spindle \
     && mkdir -p /var/log/spindle /run/user/1000 \
     && chown -R spindle:spindle /var/log/spindle /data /run/user/1000 /etc/supervisor
+
+# Spindle expects a newer version of Git than Debian provides
+COPY --from=git-bundler /home/nix/git-deb/*.deb /git.deb
+RUN apt remove -y git && apt autoremove -y && dpkg -i /git.deb && rm /git.deb
 
 WORKDIR /data
 USER spindle
@@ -79,6 +87,16 @@ ENV SPINDLE_SERVER_DOCKER_SOCKET="/var/run/docker.sock"
 
 # Allow invoked containers to use `tcp://host.docker.internal:2375` for docker
 COPY daemon.json /etc/docker/daemon.json
+
+FROM base AS test
+
+# Ensure basic commands run as expected
+RUN git --version && spindle help
+
+FROM root AS test-root
+
+# Ensure basic commands run as expected
+RUN git --version && spindle help
 
 # Default final target (unprivileged)
 FROM base
