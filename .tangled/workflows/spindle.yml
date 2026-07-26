@@ -12,6 +12,7 @@ dependencies:
 environment:
   TANGLED_REPO: "tangled.io/core"
   TANGLED_REV: "master"
+  DOCKER_HOST: "unix:///run/user/1000/docker.sock"
 
 steps:
   - name: echo docker vars
