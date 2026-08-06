@@ -1,0 +1,14 @@
+services:
+  davmail:
+    build: .
+    ports:
+      - "3000:3000"   # KasmVNC web UI
+      - "1025:1025"   # SMTP
+      - "1110:1110"   # POP3
+      - "1143:1143"   # IMAP
+      - "1389:1389"   # LDAP
+      - "1080:1080"   # CalDAV/CardDAV
+    volumes:
+      - config:/config
+volumes:
+  config:
