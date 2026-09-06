@@ -1,6 +1,6 @@
-FROM ghcr.io/linuxserver/baseimage-kasmvnc:alpine321
-RUN apk add --no-cache firefox \
-  && apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing davmail
+FROM ghcr.io/linuxserver/baseimage-kasmvnc:fedora41
+RUN dnf install -y firefox \
+  && dnf install -y https://download.opensuse.org/repositories/home:/mguessan:/davmail/Fedora_41/noarch/davmail-6.8.1-2.1.noarch.rpm
 
 # Run as unprivileged `adc` user
 ENV PUID=1000

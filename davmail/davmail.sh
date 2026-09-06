@@ -1,4 +1,4 @@
-#!/usr/bin/env ash
+#!/usr/bin/env bash
 
 # Script to continuously re-open davmail if it is closed
 while true
