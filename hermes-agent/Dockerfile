@@ -1,7 +1,7 @@
-FROM docker.io/nousresearch/hermes-agent:latest AS hermes_src
-
 # Cannot use Alpine base due to hermes-agent python dependencies only supporting glibc systems
 FROM docker.io/heywoodlh/nix:determinate AS base
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 USER root
 # Rename /entrypoint.sh from base image to /nix.sh, install dependencies
@@ -12,11 +12,10 @@ RUN mv /entrypoint.sh /nix.sh \
     && mkdir -p /usr/local/bin /opt/hermes \
     && ln -s /usr/bin/podman /usr/local/bin/docker \
     && npx playwright install --with-deps chromium --only-shell \
-    && chown -R nix /opt/hermes /etc/supervisor \
+    && chown -R nix /opt/ /etc/supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=hermes_src --chown=nix:nix /opt/hermes /opt/hermes
-COPY --from=hermes_src /usr/local/bin/uv /usr/local/bin/uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 USER nix
 
@@ -24,7 +23,16 @@ USER nix
 ENV PATH="/opt/hermes/.venv/bin:$PATH"
 
 WORKDIR /opt/hermes
-RUN uv pip install --no-cache-dir -e ".[all]"
+# Use Python 3.13 until issue 58699 is merged
+ENV UV_CACHE_DIR=/opt/uv/cache
+ENV UV_PYTHON_CACHE_DIR=/opt/uv/python-cache
+ENV UV_PYTHON_INSTALL_DIR=/opt/uv/python
+ENV UV_PYTHON_BIN_DIR=/opt/uv/python-bin
+ENV UV_TOOL_DIR=/opt/uv/tools
+ENV UV_TOOL_BIN_DIR=/opt/uv/tool-bin
+RUN git clone --depth=1 https://github.com/NousResearch/hermes-agent /opt/hermes \
+    && uv venv --python=3.13 /opt/hermes/.venv \
+    && uv pip install --no-cache-dir -e ".[all]"
 
 # Address to bind to
 ENV HOST="0.0.0.0"
