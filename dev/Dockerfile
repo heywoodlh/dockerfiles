@@ -1,11 +1,13 @@
-FROM docker.io/heywoodlh/nix:latest
+FROM docker.io/heywoodlh/nix:determinate
 LABEL MAINTAINER=heywoodlh
+
+USER root
 
 RUN apt update && apt install -y ttyd curl openssh-server mosh supervisor sudo \
     && rm -rf /var/lib/apt/lists/*
 
-RUN userdel ubuntu \
-    && addgroup --gid 1000 heywoodlh \
+RUN userdel --remove nix \
+    && groupadd heywoodlh --gid 1000 \
     && useradd --shell /bin/bash --uid 1000 --gid 1000 --create-home --home-dir /home/heywoodlh heywoodlh \
     && mkdir -p /etc/sudoers.d \
     && echo "heywoodlh ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/heywoodlh \
@@ -16,7 +18,6 @@ RUN userdel ubuntu \
 USER heywoodlh
 ENV HOME=/home/heywoodlh
 
-USER root
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY sshd.sh /sshd.sh
 COPY ttyd.sh /ttyd.sh
