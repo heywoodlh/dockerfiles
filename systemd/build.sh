@@ -13,6 +13,12 @@ validate_version() {
     [[ "$ver" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || { echo >&2 "ERROR: myversion '${ver}' is not a valid Docker tag"; exit 1; }
 }
 
+extract_version() {
+    local image="$1"
+    docker run -i --rm --entrypoint=systemctl "${image}" --version \
+        | sed -nE '1s/^[^(]*\(([0-9]+(\.[0-9]+)?).*/\1/p'
+}
+
 docker buildx ls | grep -q multiarch || docker buildx create --name multiarch --driver docker-container --use
 
 set -ex
@@ -23,7 +29,7 @@ do
   # Skip arm64 if archlinux
   [[ ${os} == "archlinux" ]] && arches="amd64"
   docker build -t "heywoodlh/systemd:${os}-local" -f "${dir}/Dockerfile.${os}" .
-  myversion=$(docker run -i --rm --entrypoint=systemctl heywoodlh/systemd:${os}-local --version | head -1 | cut -d'(' -f2 | cut -d')' -f1 | grep -oE '^[0-9]+\.[0-9]+')
+  myversion=$(extract_version "heywoodlh/systemd:${os}-local")
   validate_version "$myversion"
   docker buildx build --no-cache --platform "${arches}" -t "docker.io/heywoodlh/systemd:${os}" -t "docker.io/heywoodlh/systemd:${os}-${myversion}" -f "${dir}/Dockerfile.${os}" . --push
 
@@ -37,14 +43,14 @@ do
       upstream="true"
       [[ "${version}" != "${latest_ubuntu}" ]] && upstream="false"
       docker build --build-arg="UBUNTU_VERSION=${version}" --build-arg="UPSTREAM=${upstream}" -t "heywoodlh/systemd:ubuntu-${version}-local" -f "${dir}/Dockerfile.ubuntu" .
-      myversion=$(docker run -i --rm --entrypoint=systemctl heywoodlh/systemd:ubuntu-${version}-local --version | head -1 | cut -d'(' -f2 | cut -d')' -f1 | grep -oE '^[0-9]+\.[0-9]+')
+      myversion=$(extract_version "heywoodlh/systemd:ubuntu-${version}-local")
       validate_version "$myversion"
       docker buildx build --build-arg="UBUNTU_VERSION=${version}" --build-arg="UPSTREAM=${upstream}" --no-cache --platform "${arches}" -t "docker.io/heywoodlh/systemd:ubuntu-${version}" -t "docker.io/heywoodlh/systemd:ubuntu-${version}-${myversion}" -f "${dir}/Dockerfile.${os}" . --push
     done
 
     # Set default image to Ubuntu
     export lts="26.04"
-    myversion=$(docker run -i --rm --entrypoint=systemctl "heywoodlh/systemd:ubuntu-${lts}-local" --version | head -1 | cut -d'(' -f2 | cut -d')' -f1 | grep -oE '^[0-9]+\.[0-9]+')
+    myversion=$(extract_version "heywoodlh/systemd:ubuntu-${lts}-local")
     validate_version "$myversion"
     docker buildx build --no-cache --platform "amd64,arm64" -t "docker.io/heywoodlh/systemd:latest" -t "docker.io/heywoodlh/systemd:${myversion}" -f "${dir}/Dockerfile.ubuntu" . --push
   fi
@@ -59,11 +65,10 @@ do
       upstream="true"
       [[ "${version}" != "${latest_debian}" ]] && upstream="false"
       docker build --build-arg="DEBIAN_VERSION=${version}" --build-arg="UPSTREAM=${upstream}" -t "heywoodlh/systemd:debian-${version}-local" -f "${dir}/Dockerfile.debian" .
-      myversion=$(docker run -i --rm --entrypoint=systemctl heywoodlh/systemd:debian-${version}-local --version | head -1 | cut -d'(' -f2 | cut -d')' -f1 | grep -oE '^[0-9]+\.[0-9]+')
+      myversion=$(extract_version "heywoodlh/systemd:debian-${version}-local")
       validate_version "$myversion"
       docker buildx build --build-arg="DEBIAN_VERSION=${version}" --build-arg="UPSTREAM=${upstream}" --no-cache --platform "${arches}" -t "docker.io/heywoodlh/systemd:debian-${version}" -t "docker.io/heywoodlh/systemd:debian-${version}-${myversion}" -f "${dir}/Dockerfile.${os}" . --push
     done
   fi
-
 done
 
