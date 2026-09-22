@@ -20,6 +20,7 @@ extract_version() {
 }
 
 docker buildx ls | grep -q multiarch || docker buildx create --name multiarch --driver docker-container --use
+docker run --privileged --rm tonistiigi/binfmt --install all &>/dev/null
 
 set -ex
 
@@ -58,7 +59,7 @@ do
   # Debian releases
   if [[ ${os} == "debian" ]]
   then
-    debian_versions=("trixie" "bullseye" "sid")
+    debian_versions=("trixie" "bookworm" "sid")
     latest_debian="sid"
     for version in "${debian_versions[@]}"
     do
