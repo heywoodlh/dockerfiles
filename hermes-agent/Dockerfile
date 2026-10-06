@@ -23,7 +23,6 @@ USER nix
 ENV PATH="/opt/hermes/.venv/bin:$PATH"
 
 WORKDIR /opt/hermes
-# Use Python 3.13 until issue 58699 is merged
 ENV UV_CACHE_DIR=/opt/uv/cache
 ENV UV_PYTHON_CACHE_DIR=/opt/uv/python-cache
 ENV UV_PYTHON_INSTALL_DIR=/opt/uv/python
@@ -31,7 +30,7 @@ ENV UV_PYTHON_BIN_DIR=/opt/uv/python-bin
 ENV UV_TOOL_DIR=/opt/uv/tools
 ENV UV_TOOL_BIN_DIR=/opt/uv/tool-bin
 RUN git clone --depth=1 https://github.com/NousResearch/hermes-agent /opt/hermes \
-    && uv venv --python=3.13 /opt/hermes/.venv \
+    && uv venv /opt/hermes/.venv \
     && uv pip install --no-cache-dir -e ".[all]"
 
 # Address to bind to
