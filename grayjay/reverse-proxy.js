@@ -3,6 +3,7 @@
 
 const http = require('node:http');
 const net = require('node:net');
+const { randomUUID } = require('node:crypto');
 
 const upstreamPort = Number(process.argv[2]);
 if (!Number.isInteger(upstreamPort) || upstreamPort < 1 || upstreamPort > 65535) {
@@ -20,23 +21,49 @@ function publicOrigin(request) {
   return `${protocol}://${host}`;
 }
 
-function upstreamFor(request) {
-  const match = /^\/_grayjay_proxy\/(\d{1,5})(\/.*)?$/.exec(request.url);
-  if (!match) {
-    return { port: upstreamPort, path: request.url };
+const mediaProxyTokens = new Map();
+const mediaProxyTokenTtlMs = 6 * 60 * 60 * 1000;
+
+function issueMediaProxyToken(port) {
+  const now = Date.now();
+  for (const [token, entry] of mediaProxyTokens) {
+    if (entry.expiresAt <= now) mediaProxyTokens.delete(token);
   }
-  const port = Number(match[1]);
-  if (port < 1024 || port > 65535) {
+  const token = randomUUID();
+  mediaProxyTokens.set(token, { port, expiresAt: now + mediaProxyTokenTtlMs });
+  return token;
+}
+
+function upstreamFor(request) {
+  const isMediaProxyPath = request.url.startsWith('/_grayjay_proxy/');
+  const match = /^\/_grayjay_proxy\/([0-9a-f-]{36})(\/.*)?$/.exec(request.url);
+  if (!match) {
+    return isMediaProxyPath ? null : { port: upstreamPort, path: request.url };
+  }
+  const entry = mediaProxyTokens.get(match[1]);
+  if (!entry || entry.expiresAt <= Date.now()) {
+    mediaProxyTokens.delete(match[1]);
     return null;
   }
-  return { port, path: match[2] || '/' };
+  return { port: entry.port, path: match[2] || '/' };
 }
 
 function copyHeaders(headers) {
-  const copied = { ...headers };
-  delete copied.host;
-  delete copied.connection;
-  delete copied['content-length'];
+  const copied = Object.create(null);
+  for (const [name, value] of Object.entries(headers)) {
+    if (!['host', 'connection', 'content-length'].includes(name)) copied[name] = value;
+  }
+  return copied;
+}
+
+function safeResponseHeaders(headers) {
+  const copied = Object.create(null);
+  for (const [name, value] of Object.entries(headers)) {
+    if (name !== 'location') copied[name] = value;
+  }
+  if (typeof headers.location === 'string' && /^\/(?!\/)/.test(headers.location)) {
+    copied.location = headers.location;
+  }
   return copied;
 }
 
@@ -57,7 +84,7 @@ const server = http.createServer((request, response) => {
     const contentType = upstreamResponse.headers['content-type'] || '';
     const shouldRewrite = typeof contentType === 'string' && contentType.includes('application/dash+xml');
     if (!shouldRewrite) {
-      response.writeHead(upstreamResponse.statusCode || 502, upstreamResponse.headers);
+      response.writeHead(upstreamResponse.statusCode || 502, safeResponseHeaders(upstreamResponse.headers));
       upstreamResponse.pipe(response);
       return;
     }
@@ -66,11 +93,14 @@ const server = http.createServer((request, response) => {
     upstreamResponse.on('data', chunk => chunks.push(chunk));
     upstreamResponse.on('end', () => {
       const origin = publicOrigin(request);
-      const headers = { ...upstreamResponse.headers };
+      const headers = safeResponseHeaders(upstreamResponse.headers);
       delete headers['content-length'];
       const body = Buffer.concat(chunks).toString('utf8').replace(
         /http:\/\/127\.0\.0\.1:(\d{1,5})\//g,
-        (_, port) => origin ? `${origin}/_grayjay_proxy/${port}/` : `/_grayjay_proxy/${port}/`,
+        (_, port) => {
+          const path = `/_grayjay_proxy/${issueMediaProxyToken(Number(port))}/`;
+          return origin ? `${origin}${path}` : path;
+        },
       );
       response.writeHead(upstreamResponse.statusCode || 502, headers);
       response.end(body);
