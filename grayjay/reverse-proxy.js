@@ -4,10 +4,11 @@
 const http = require('node:http');
 const net = require('node:net');
 const { randomUUID } = require('node:crypto');
+const { readFileSync } = require('node:fs');
 
-const upstreamPort = Number(process.argv[2]);
+const upstreamPort = Number(readFileSync('/data/port', 'utf8').trim());
 if (!Number.isInteger(upstreamPort) || upstreamPort < 1 || upstreamPort > 65535) {
-  throw new Error('usage: reverse-proxy.js <Grayjay loopback port>');
+  throw new Error('Grayjay did not write a valid loopback port');
 }
 
 function publicOrigin(request) {
@@ -56,15 +57,14 @@ function copyHeaders(headers) {
   return copied;
 }
 
-function safeResponseHeaders(headers) {
-  const copied = Object.create(null);
-  for (const [name, value] of Object.entries(headers)) {
-    if (name !== 'location') copied[name] = value;
+function applyResponseHeaders(response, headers, includeContentLength) {
+  for (const name of ['content-type', 'content-range', 'accept-ranges', 'cache-control', 'etag', 'last-modified']) {
+    const value = headers[name];
+    if (typeof value === 'string' || Array.isArray(value)) response.setHeader(name, value);
   }
-  if (typeof headers.location === 'string' && /^\/(?!\/)/.test(headers.location)) {
-    copied.location = headers.location;
+  if (includeContentLength && typeof headers['content-length'] === 'string') {
+    response.setHeader('content-length', headers['content-length']);
   }
-  return copied;
 }
 
 const server = http.createServer((request, response) => {
@@ -84,7 +84,8 @@ const server = http.createServer((request, response) => {
     const contentType = upstreamResponse.headers['content-type'] || '';
     const shouldRewrite = typeof contentType === 'string' && contentType.includes('application/dash+xml');
     if (!shouldRewrite) {
-      response.writeHead(upstreamResponse.statusCode || 502, safeResponseHeaders(upstreamResponse.headers));
+      response.statusCode = upstreamResponse.statusCode || 502;
+      applyResponseHeaders(response, upstreamResponse.headers, true);
       upstreamResponse.pipe(response);
       return;
     }
@@ -93,8 +94,6 @@ const server = http.createServer((request, response) => {
     upstreamResponse.on('data', chunk => chunks.push(chunk));
     upstreamResponse.on('end', () => {
       const origin = publicOrigin(request);
-      const headers = safeResponseHeaders(upstreamResponse.headers);
-      delete headers['content-length'];
       const body = Buffer.concat(chunks).toString('utf8').replace(
         /http:\/\/127\.0\.0\.1:(\d{1,5})\//g,
         (_, port) => {
@@ -102,12 +101,14 @@ const server = http.createServer((request, response) => {
           return origin ? `${origin}${path}` : path;
         },
       );
-      response.writeHead(upstreamResponse.statusCode || 502, headers);
+      response.statusCode = upstreamResponse.statusCode || 502;
+      applyResponseHeaders(response, upstreamResponse.headers, false);
       response.end(body);
     });
   });
   upstreamRequest.on('error', error => {
-    response.writeHead(502).end(`Grayjay upstream error: ${error.message}`);
+    response.statusCode = 502;
+    response.end(`Grayjay upstream error: ${error.message}`);
   });
   request.pipe(upstreamRequest);
 });

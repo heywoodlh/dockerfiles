@@ -17,7 +17,7 @@ for _ in $(seq 1 60); do
   if [[ -s port ]]; then
     port=$(<port)
     if [[ "$port" =~ ^[0-9]+$ ]]; then
-      node /usr/local/bin/reverse-proxy.js "$port" &
+      node /usr/local/bin/reverse-proxy.js &
       proxy_pid=$!
       wait "$grayjay_pid"
       exit_code=$?
