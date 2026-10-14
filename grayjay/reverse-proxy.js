@@ -37,8 +37,8 @@ function issueMediaProxyToken(port) {
 
 function localPath(value) {
   if (typeof value !== 'string' || !value.startsWith('/')) return null;
-  const url = new URL(value, 'http://grayjay.internal');
-  if (url.origin !== 'http://grayjay.internal') return null;
+  const url = new URL(value, 'https://grayjay.internal');
+  if (url.origin !== 'https://grayjay.internal') return null;
   return `${url.pathname}${url.search}`;
 }
 
