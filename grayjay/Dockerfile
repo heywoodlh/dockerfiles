@@ -18,9 +18,19 @@ RUN apt-get update && apt-get install -y \
     libasound2t64 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
+    libcairo2 \
     libcups2 \
+    libegl1 \
+    libgl1 \
+    libgtk-3-0 \
     libpango-1.0-0 \
+    libwayland-client0 \
+    libwayland-cursor0 \
+    libwayland-egl1 \
+    libxkbcommon0 \
     libxshmfence1 \
+    socat \
+    xvfb \
     fonts-liberation && \
     rm -rf /var/lib/apt/lists/* && \
     printf '#!/bin/sh\nprintf "xdg-open stub (no GUI): %s\\n" "$*" >&2\nexit 0\n' >/usr/local/bin/xdg-open && \
@@ -34,6 +44,9 @@ RUN unzip grayjay.zip && \
     mv Grayjay.Desktop-linux-x64-*/* . && \
     rm -rf Grayjay.Desktop-linux-x64-* && \
     sed -i 's|ws://127\.0\.0\.1:${window\.location\.port}/ws|${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws|' wwwroot/web/assets/*.js
+
+COPY entrypoint.sh /usr/local/bin/grayjay-entrypoint
+RUN chmod 755 /usr/local/bin/grayjay-entrypoint
 
 ENV \
   DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
@@ -65,4 +78,4 @@ EXPOSE 11338 12315
 
 # GrayJay expects assets to live in invoked directory
 # Workaround it by just copying everything to /data
-ENTRYPOINT ["/bin/bash", "-c", "mkdir -p /data; cd /data; cp -rf /opt/grayjay/* .; ./Grayjay --server --ignore-security"]
+ENTRYPOINT ["/usr/local/bin/grayjay-entrypoint"]
