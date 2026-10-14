@@ -32,7 +32,8 @@ ADD https://updater.grayjay.app/Apps/Grayjay.Desktop/Grayjay.Desktop-linux-x64.z
 RUN unzip grayjay.zip && \
     rm grayjay.zip && \
     mv Grayjay.Desktop-linux-x64-*/* . && \
-    rm -rf Grayjay.Desktop-linux-x64-*
+    rm -rf Grayjay.Desktop-linux-x64-* && \
+    sed -i 's|ws://127\.0\.0\.1:${window\.location\.port}/ws|${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws|' wwwroot/web/assets/*.js
 
 ENV \
   DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
