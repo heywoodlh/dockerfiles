@@ -10,14 +10,14 @@ Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp &
 xvfb_pid=$!
 export DISPLAY=:99
 
-./Grayjay --headless --ignore-security &
+./Grayjay --headless --ignore-security --no-sandbox &
 grayjay_pid=$!
 
 for _ in $(seq 1 60); do
   if [[ -s port ]]; then
     port=$(<port)
     if [[ "$port" =~ ^[0-9]+$ ]]; then
-      socat TCP-LISTEN:11338,fork,reuseaddr TCP:127.0.0.1:"$port" &
+      node /usr/local/bin/reverse-proxy.js "$port" &
       proxy_pid=$!
       wait "$grayjay_pid"
       exit_code=$?

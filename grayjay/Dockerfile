@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y \
     libwayland-egl1 \
     libxkbcommon0 \
     libxshmfence1 \
+    nodejs \
     socat \
     xvfb \
     fonts-liberation && \
@@ -46,7 +47,8 @@ RUN unzip grayjay.zip && \
     sed -i 's|ws://127\.0\.0\.1:${window\.location\.port}/ws|${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws|' wwwroot/web/assets/*.js
 
 COPY entrypoint.sh /usr/local/bin/grayjay-entrypoint
-RUN chmod 755 /usr/local/bin/grayjay-entrypoint
+COPY reverse-proxy.js /usr/local/bin/reverse-proxy.js
+RUN chmod 755 /usr/local/bin/grayjay-entrypoint /usr/local/bin/reverse-proxy.js
 
 ENV \
   DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
