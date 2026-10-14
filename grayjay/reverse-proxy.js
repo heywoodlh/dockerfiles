@@ -35,11 +35,20 @@ function issueMediaProxyToken(port) {
   return token;
 }
 
+function localPath(value) {
+  if (typeof value !== 'string' || !value.startsWith('/')) return null;
+  const url = new URL(value, 'http://grayjay.internal');
+  if (url.origin !== 'http://grayjay.internal') return null;
+  return `${url.pathname}${url.search}`;
+}
+
 function upstreamFor(request) {
-  const isMediaProxyPath = request.url.startsWith('/_grayjay_proxy/');
-  const match = /^\/_grayjay_proxy\/([0-9a-f-]{36})(\/.*)?$/.exec(request.url);
+  const path = localPath(request.url);
+  if (!path) return null;
+  const isMediaProxyPath = path.startsWith('/_grayjay_proxy/');
+  const match = /^\/_grayjay_proxy\/([0-9a-f-]{36})(\/.*)?$/.exec(path);
   if (!match) {
-    return isMediaProxyPath ? null : { port: upstreamPort, path: request.url };
+    return isMediaProxyPath ? null : { port: upstreamPort, path };
   }
   const entry = mediaProxyTokens.get(match[1]);
   if (!entry || entry.expiresAt <= Date.now()) {
