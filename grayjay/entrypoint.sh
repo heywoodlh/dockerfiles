@@ -4,7 +4,7 @@ set -euo pipefail
 mkdir -p /data
 cd /data
 cp -rf /opt/grayjay/* .
-rm -f port
+rm -f port cef_cache/SingletonLock cef_cache/SingletonCookie cef_cache/SingletonSocket
 
 Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp &
 xvfb_pid=$!
